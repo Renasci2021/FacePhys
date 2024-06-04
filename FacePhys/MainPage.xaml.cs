@@ -7,22 +7,21 @@ namespace FacePhys;
 
 public partial class MainPage : ContentPage
 {
-    private CameraWorkflowManager _workflowManager;
-    private SKBitmap? _skBitmap;
+    private CameraWorkflowManager workflowManager;
+    private SKBitmap? skBitmap;
 
     public MainPage()
     {
         InitializeComponent();
-        _workflowManager = new CameraWorkflowManager(new CameraService(), new DetectService());
-        _workflowManager.BitmapUpdated += UpdateCanvas;
-        _workflowManager.LogUpdated += UpdateLog;
-        // _workflowManager.OpenCamera();
+        workflowManager = new CameraWorkflowManager(new CameraService(), new DetectService());
+        workflowManager.BitmapUpdated += UpdateCanvas;
+        workflowManager.LogUpdated += UpdateLog;
     }
 
     private void UpdateCanvas(SKBitmap? skBitmap)
     {
         canvasView.InvalidateSurface();
-        _skBitmap = skBitmap;
+        this.skBitmap = skBitmap;
     }
 
     private void UpdateLog(string message)
@@ -38,14 +37,19 @@ public partial class MainPage : ContentPage
         var surface = e.Surface;
         var canvas = surface.Canvas;
         canvas.Clear();
-        if (_skBitmap != null)
+        if (skBitmap != null)
         {
-            canvas.DrawBitmap(_skBitmap, e.Info.Rect);
+            canvas.DrawBitmap(skBitmap, e.Info.Rect);
         }
     }
 
-    private async void OnButtonClicked(object sender, EventArgs e)
+    private void OnButtonClicked(object sender, EventArgs e)
     {
-        _workflowManager.OpenCamera();
+        workflowManager.OpenCamera();
+    }
+
+    private void OnDetectFaceClicked(object sender, EventArgs e)
+    {
+        workflowManager.DetectAtNextFrame = true;
     }
 }

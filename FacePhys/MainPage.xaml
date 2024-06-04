@@ -10,8 +10,10 @@
                                PaintSurface="OnCanvasViewPaintSurface"
                                HeightRequest="300"
                                BackgroundColor="LightGray" />
-            <Button Text="Start Camera"
+            <Button Text="Open Camera"
                     Clicked="OnButtonClicked" />
+            <Button Text="Detect Face"
+                    Clicked="OnDetectFaceClicked" />
             <Label x:Name="logLabel"
                    Text="Log"
                    FontSize="20"

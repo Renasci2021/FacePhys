@@ -1,4 +1,5 @@
 using System.Drawing;
+using Android.Graphics;
 using FacePhys.Services;
 using FacePhys.Utils;
 using SkiaSharp;
@@ -9,11 +10,12 @@ public class CameraWorkflowManager
 {
     private CameraService _cameraService;
     private DetectService _detectService;
-    private int _frameCount = -1;
-    private SKBitmap? _skBitmap;
-    private int _detectStatus = -1;
 
     private bool cameraReady = false;
+
+    private SKBitmap? skBitmap;
+
+    public bool DetectAtNextFrame { get; set; } = false;
 
     public event Action<SKBitmap?>? BitmapUpdated;
     public event Action<string>? LogUpdated;
@@ -45,36 +47,27 @@ public class CameraWorkflowManager
 
     private void OnFrameCaptured(object? sender, byte[] imageData)
     {
-        // 一开始的时候不能调用，需要记录状态
         if (!cameraReady)
         {
             return;
         }
 
+        skBitmap = imageData.DecodeImage().CropBitmapToSquare().RotateBitmap(-90);
+        BitmapUpdated?.Invoke(skBitmap);
 
-
-
-        ProcessImage(imageData);
-    }
-
-    private void ProcessImage(byte[] imageData)
-    {
-        _skBitmap = imageData.DecodeImage().CropBitmapToSquare().RotateBitmap(-90);
-        BitmapUpdated?.Invoke(_skBitmap);
-
-        if (_detectStatus == -1)
+        if (DetectAtNextFrame)
         {
-            _detectStatus = 0;
-        }
-        else if (_detectStatus == 0)
-        {
-            var detectResult = _detectService.Detect(imageData);
+            DetectAtNextFrame = false;
+            using var skData = skBitmap.Encode(SKEncodedImageFormat.Png, 100);
+            var detectResult = _detectService.Detect(skData.ToArray());
             if (detectResult != null && detectResult.Boxes.Count > 0)
             {
-                LogUpdated?.Invoke($"\n{detectResult.Boxes.Count} faces detected.");
+                LogUpdated?.Invoke($"{detectResult.Boxes.Count} faces detected.");
             }
-            _detectStatus = 1;
+            else
+            {
+                LogUpdated?.Invoke($"No face detected.");
+            }
         }
     }
-
 }

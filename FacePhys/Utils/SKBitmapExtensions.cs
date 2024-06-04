@@ -40,10 +40,4 @@ public static class SKBitmapExtensions
 
         return rotatedBitmap;
     }
-
-    // 转换为字节数组
-    public static byte[] ConvertToByteArray(this SKBitmap bitmap)
-    {
-        return bitmap.Bytes;
-    }
 }
