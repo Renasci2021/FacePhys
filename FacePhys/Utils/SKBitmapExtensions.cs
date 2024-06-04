@@ -1,4 +1,5 @@
 using SkiaSharp;
+using UltraFaceDotNet;
 
 namespace FacePhys.Utils;
 
@@ -39,5 +40,54 @@ public static class SKBitmapExtensions
         }
 
         return rotatedBitmap;
+    }
+
+    // 裁剪图片
+    public static SKBitmap CropBitmap(this SKBitmap origin, FaceInfo faceInfo)
+    {
+        // 计算面部区域的中心点
+        float centerX = (faceInfo.X1 + faceInfo.X2) / 2;
+        float centerY = (faceInfo.Y1 + faceInfo.Y2) / 2;
+
+        // 计算面部区域的宽度和高度，选择最大值作为正方形的边长
+        int sideLength = (int)Math.Max(faceInfo.X2 - faceInfo.X1, faceInfo.Y2 - faceInfo.Y1);
+
+        // 计算正方形的左上角和右下角坐标
+        int startX = (int)(centerX - sideLength / 2);
+        int startY = (int)(centerY - sideLength / 2);
+        int endX = startX + sideLength;
+        int endY = startY + sideLength;
+
+        // 调整坐标确保不会超出原始图像边界
+        startX = Math.Max(0, startX);
+        startY = Math.Max(0, startY);
+        endX = Math.Min(origin.Width, endX);
+        endY = Math.Min(origin.Height, endY);
+
+        // 更新边长以匹配可能的边界调整
+        sideLength = Math.Min(endX - startX, endY - startY);
+
+        // 创建一个新的SKBitmap来存储裁剪后的图像
+        SKBitmap croppedBitmap = new SKBitmap(sideLength, sideLength);
+
+        // 使用SKRect定义裁剪区域
+        SKRectI cropRect = new SKRectI(startX, startY, startX + sideLength, startY + sideLength);
+
+        // 裁剪图像
+        if (origin.ExtractSubset(croppedBitmap, cropRect))
+        {
+            return croppedBitmap;
+        }
+        else
+        {
+            return origin.CropBitmapToSquare();
+        }
+    }
+
+    // 压缩图片分辨率
+    public static SKBitmap ResizeToSize(this SKBitmap origin, int size)
+    {
+        var imageInfo = new SKImageInfo(size, size);
+        return origin.Resize(imageInfo, SKFilterQuality.Low);
     }
 }

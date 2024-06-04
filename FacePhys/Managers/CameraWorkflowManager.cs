@@ -1,8 +1,7 @@
-using System.Drawing;
-using Android.Graphics;
 using FacePhys.Services;
 using FacePhys.Utils;
 using SkiaSharp;
+using UltraFaceDotNet;
 
 namespace FacePhys.Managers;
 
@@ -45,29 +44,49 @@ public class CameraWorkflowManager
         }
     }
 
-    private void OnFrameCaptured(object? sender, byte[] imageData)
+    private async void OnFrameCaptured(object? sender, byte[] imageData)
     {
         if (!cameraReady)
         {
             return;
         }
 
-        skBitmap = imageData.DecodeImage().CropBitmapToSquare().RotateBitmap(-90);
+        // ! 旋转角度根据实际情况调整
+        skBitmap = PrepareBitmap(imageData, -90);
         BitmapUpdated?.Invoke(skBitmap);
 
         if (DetectAtNextFrame)
         {
             DetectAtNextFrame = false;
-            using var skData = skBitmap.Encode(SKEncodedImageFormat.Png, 100);
-            var detectResult = _detectService.Detect(skData.ToArray());
-            if (detectResult != null && detectResult.Boxes.Count > 0)
+            var faceInfo = await Task.Run(() => DetectFace(skBitmap));
+            if (faceInfo != null)
             {
-                LogUpdated?.Invoke($"{detectResult.Boxes.Count} faces detected.");
+                var croppedBitmap = skBitmap.CropBitmap(faceInfo);
+                var resizedBitmap = croppedBitmap.ResizeToSize(8);
+
+                // TODO: 传递给后端
             }
-            else
-            {
-                LogUpdated?.Invoke($"No face detected.");
-            }
+        }
+    }
+
+    private SKBitmap PrepareBitmap(byte[] imageData, int rotation = 0)
+    {
+        return imageData.DecodeImage().CropBitmapToSquare().RotateBitmap(rotation);
+    }
+
+    private FaceInfo? DetectFace(SKBitmap skBitmap)
+    {
+        using var skData = skBitmap.Encode(SKEncodedImageFormat.Png, 100);
+        var detectResult = _detectService.Detect(skData.ToArray());
+        if (detectResult != null && detectResult.Boxes.Count > 0)
+        {
+            LogUpdated?.Invoke($"{detectResult.Boxes.Count} faces detected.");
+            return detectResult.Boxes.First();
+        }
+        else
+        {
+            LogUpdated?.Invoke($"No face detected.");
+            return null;
         }
     }
 }
