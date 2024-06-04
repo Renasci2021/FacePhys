@@ -9,8 +9,8 @@ namespace FacePhys.Services;
 
 public class CameraService
 {
-    CameraDevice? _cameraDevice;
-    ImageReader? _imageReader;
+    private CameraDevice? cameraDevice;
+    private ImageReader? imageReader;
 
     public async Task<bool> CheckCameraPermissionAsync()
     {
@@ -52,28 +52,28 @@ public class CameraService
 
     public void StopCamera()
     {
-        _cameraDevice?.Close();
-        _cameraDevice = null;
+        cameraDevice?.Close();
+        cameraDevice = null;
     }
 
     private class CameraStateCallback(CameraService owner) : CameraDevice.StateCallback
     {
         public override void OnOpened(CameraDevice camera)
         {
-            owner._cameraDevice = camera;
+            owner.cameraDevice = camera;
             owner.SetupCaptureSession();
         }
 
         public override void OnDisconnected(CameraDevice camera)
         {
             camera.Close();
-            owner._cameraDevice = null;
+            owner.cameraDevice = null;
         }
 
         public override void OnError(CameraDevice camera, CameraError error)
         {
             camera.Close();
-            owner._cameraDevice = null;
+            owner.cameraDevice = null;
 
             throw new Exception($"Camera error: {error}");
         }
@@ -81,13 +81,13 @@ public class CameraService
 
     private void SetupCaptureSession()
     {
-        _imageReader = ImageReader.NewInstance(640, 480, ImageFormatType.Jpeg, 2);
-        _imageReader.SetOnImageAvailableListener(new ImageAvailableListener(this), null);
+        imageReader = ImageReader.NewInstance(640, 480, ImageFormatType.Jpeg, 2);
+        imageReader.SetOnImageAvailableListener(new ImageAvailableListener(this), null);
 
-        var captureRequestBuilder = _cameraDevice?.CreateCaptureRequest(CameraTemplate.Preview);
-        captureRequestBuilder?.AddTarget(_imageReader.Surface);
+        var captureRequestBuilder = cameraDevice?.CreateCaptureRequest(CameraTemplate.Preview);
+        captureRequestBuilder?.AddTarget(imageReader.Surface);
 
-        var surfaces = new List<Surface> { _imageReader.Surface };
+        var surfaces = new List<Surface> { imageReader.Surface };
         var outputConfiguration = surfaces.Select(surface => new OutputConfiguration(surface)).ToList();
         var executor = Executors.NewSingleThreadExecutor();
 
@@ -98,7 +98,7 @@ public class CameraService
             new SessionStateCallback(this)
         );
 
-        _cameraDevice?.CreateCaptureSession(sessionConfiguration);
+        cameraDevice?.CreateCaptureSession(sessionConfiguration);
     }
 
     private class SessionStateCallback(CameraService owner) : CameraCaptureSession.StateCallback
@@ -123,8 +123,8 @@ public class CameraService
 
     private void StartCapture(CameraCaptureSession session)
     {
-        var captureRequestBuilder = _cameraDevice?.CreateCaptureRequest(CameraTemplate.Preview);
-        captureRequestBuilder?.AddTarget(_imageReader.Surface);
+        var captureRequestBuilder = cameraDevice?.CreateCaptureRequest(CameraTemplate.Preview);
+        captureRequestBuilder?.AddTarget(imageReader.Surface);
         session.SetRepeatingRequest(captureRequestBuilder?.Build(), null, null);
     }
 

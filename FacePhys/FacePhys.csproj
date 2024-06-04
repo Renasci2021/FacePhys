@@ -79,4 +79,9 @@
 		<PackageReference Include="UltraFaceDotNet.Xamarin" Version="1.0.0.2" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Managers\" />
+	  <Folder Include="Utils\" />
+	</ItemGroup>
+
 </Project>

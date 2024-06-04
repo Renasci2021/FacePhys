@@ -8,8 +8,7 @@ namespace FacePhys.Services;
 
 public sealed class DetectService
 {
-
-    private readonly UltraFace _UltraFace;
+    private readonly UltraFace ultraFace;
 
     public DetectService()
     {
@@ -41,7 +40,7 @@ public sealed class DetectService
             ScoreThreshold = 0.7f
         };
 
-        this._UltraFace = UltraFace.Create(param);
+        this.ultraFace = UltraFace.Create(param);
     }
 
     public DetectResult Detect(byte[] file)
@@ -55,7 +54,7 @@ public sealed class DetectService
 
         using var inMat = Mat.FromPixels(frame.Data, NcnnDotNet.PixelType.Bgr2Rgb, frame.Cols, frame.Rows);
 
-        var faceInfos = this._UltraFace.Detect(inMat).ToArray();
+        var faceInfos = this.ultraFace.Detect(inMat).ToArray();
 
         if (Ncnn.IsSupportVulkan)
             Ncnn.DestroyGpuInstance();
