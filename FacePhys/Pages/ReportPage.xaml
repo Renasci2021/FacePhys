@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:FacePhys.Models;assembly=FacePhys"
+             xmlns:vm="clr-namespace:FacePhys.ViewModels;assembly=FacePhys"
+             xmlns:selectors="clr-namespace:FacePhys.Selectors;assembly=FacePhys"
+             xmlns:converters="clr-namespace:FacePhys.Converters;assembly=FacePhys"
+             x:Class="FacePhys.Pages.ReportPage"
+             x:DataType="vm:ReportPageViewModel">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Define data templates for each health metric type -->
+            <DataTemplate x:Key="BloodPressureTemplate"
+                        x:DataType="models:BloodPressure">
+                <Frame CornerRadius="10"
+                    Padding="20"
+                    BackgroundColor="White">
+                    <VerticalStackLayout Spacing="15">
+                        <AbsoluteLayout HorizontalOptions="FillAndExpand">
+                            <Image Source="Resources/Images/Icons/blood_pressure.png"
+                                HeightRequest="50"
+                                HorizontalOptions="Start" 
+                                AbsoluteLayout.LayoutBounds="0, 0.5, AutoSize, AutoSize"
+                                AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                            <Label Text="血压" 
+                                FontSize="Large" 
+                                HorizontalOptions="Start" 
+                                FontAttributes="Bold" 
+                                TextColor="Black"
+                                AbsoluteLayout.LayoutBounds="0.25, 0.5, AutoSize, AutoSize"
+                                AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                            <Button Text="查看更多" 
+                                    HorizontalOptions="End" 
+                                    BackgroundColor="White" 
+                                    TextColor="Black"
+                                    AbsoluteLayout.LayoutBounds="1, 0.5, AutoSize, AutoSize"
+                                    AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                        </AbsoluteLayout>
+
+                        <Frame CornerRadius="10"
+                            Padding="10"
+                            BackgroundColor="White"
+                            >
+                            <VerticalStackLayout Spacing="30">
+                                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                                    <VerticalStackLayout AbsoluteLayout.LayoutBounds="0,0,0.5,1" AbsoluteLayout.LayoutFlags="All" HorizontalOptions="Start">
+                                        <Label Text="舒张压" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#596D68" FontAttributes="Bold"/>
+                                        <Label Text="{Binding Diastolic, StringFormat='{0}mmHg'}" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#596D68" FontAttributes="Bold"/>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout AbsoluteLayout.LayoutBounds="1,0,0.5,1" AbsoluteLayout.LayoutFlags="All" HorizontalOptions="End">
+                                        <Label Text="收缩压" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#596D68" FontAttributes="Bold"/>
+                                        <Label Text="{Binding Systolic, StringFormat='{0}mmHg'}" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#596D68" FontAttributes="Bold"/>
+                                    </VerticalStackLayout>
+                                </AbsoluteLayout>
+                                
+                                <Frame BackgroundColor="Transparent" HeightRequest="30" HasShadow="False" Padding="0" BorderColor="Transparent" CornerRadius="0"/>
+
+                                <Image Source="Resources/Images/blood_pressure_image.png" HeightRequest="50" HorizontalOptions="Center" />
+                                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                                    <Label Text="测量时间" FontSize="Small" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0,0.5,-1,-1" TextColor="#3E4C48"/>
+                                    <Label Text="{Binding Timestamp}" FontSize="Small" HorizontalOptions="End" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="1,0.5,-1,-1"  TextColor="#3E4C48"/>
+                                </AbsoluteLayout>
+
+                            </VerticalStackLayout>
+                        </Frame>
+                    </VerticalStackLayout>
+                </Frame>
+            </DataTemplate>
+
+            <DataTemplate x:Key="HeartRateTemplate"
+                        x:DataType="models:HeartRate">
+                <Frame CornerRadius="10"
+                    Padding="20"
+                    BackgroundColor="White">
+                    
+                    <VerticalStackLayout Spacing="15">
+                        <AbsoluteLayout HorizontalOptions="FillAndExpand">
+                            <Image Source="Resources/Images/Icons/heart_rate.png"
+                                HeightRequest="50"
+                                HorizontalOptions="Start" 
+                                AbsoluteLayout.LayoutBounds="0, 0.5, AutoSize, AutoSize"
+                                AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                            <Label Text="心率" 
+                                FontSize="Large" 
+                                HorizontalOptions="Start" 
+                                FontAttributes="Bold" 
+                                TextColor="Black"
+                                AbsoluteLayout.LayoutBounds="0.25, 0.5, AutoSize, AutoSize"
+                                AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                            <Button Text="查看更多" 
+                                    HorizontalOptions="End" 
+                                    BackgroundColor="White" 
+                                    TextColor="Black"
+                                    AbsoluteLayout.LayoutBounds="1, 0.5, AutoSize, AutoSize"
+                                    AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                        </AbsoluteLayout>
+                        <Frame CornerRadius="10"
+                            Padding="10"
+                            BackgroundColor="White">
+                            <VerticalStackLayout>
+                                <VerticalStackLayout>
+                                    <Label Text="平均心率" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#3E4C48" />
+                                    <Label Text="{Binding Value, StringFormat='{0}次/分钟'}" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#7CC587" FontAttributes="Bold"/>
+                                </VerticalStackLayout>
+                                <Image Source="Resources/Images/heart_rate_image.png" HeightRequest="50" HorizontalOptions="Center" />
+                                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                                    <Label Text="测量时间" FontSize="Small" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0,0.5,-1,-1" TextColor="#3E4C48"/>
+                                    <Label Text="{Binding Timestamp}" FontSize="Small" HorizontalOptions="End" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="1,0.5,-1,-1" TextColor="#3E4C48"/>
+                                </AbsoluteLayout>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </VerticalStackLayout>
+                </Frame>
+            </DataTemplate>
+
+            <DataTemplate x:Key="RespirationRateTemplate"
+                        x:DataType="models:RespirationRate">
+                <Frame CornerRadius="10"
+                    Padding="20"
+                    BackgroundColor="White">
+                    <VerticalStackLayout Spacing="15">
+                        <AbsoluteLayout HorizontalOptions="FillAndExpand">
+                            <Image Source="Resources/Images/Icons/respiratoty_rate.png"
+                                HeightRequest="50"
+                                HorizontalOptions="Start" 
+                                AbsoluteLayout.LayoutBounds="0, 0.5, AutoSize, AutoSize"
+                                AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                            <Label Text="呼吸" 
+                                FontSize="Large" 
+                                HorizontalOptions="Start" 
+                                FontAttributes="Bold" 
+                                TextColor="Black"
+                                AbsoluteLayout.LayoutBounds="0.25, 0.5, AutoSize, AutoSize"
+                                AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                            <Button Text="查看更多" 
+                                    HorizontalOptions="End" 
+                                    BackgroundColor="White" 
+                                    TextColor="Black"
+                                    AbsoluteLayout.LayoutBounds="1, 0.5, AutoSize, AutoSize"
+                                    AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                        </AbsoluteLayout>
+                        <Frame CornerRadius="10"
+                            Padding="10"
+                            BackgroundColor="White">
+                            <VerticalStackLayout Spacing="15">
+                                <HorizontalStackLayout Spacing="50">
+                                    <VerticalStackLayout Margin="0,20,0,0">
+                                        <Label Text="呼吸频率" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#3E4C48"/>
+                                        <Label Text="{Binding Value, StringFormat='{0}次/分钟'}" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#7CC587" FontAttributes="Bold"/>
+                                    </VerticalStackLayout>
+                                    <Image Source="Resources/Images/respiratory_rate_image.png" HeightRequest="100" HorizontalOptions="End" />
+                                </HorizontalStackLayout>
+                                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                                    <Label Text="测量时间" FontSize="Small" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0,0.5,-1,-1" TextColor="#3E4C48"/>
+                                    <Label Text="{Binding Timestamp}" FontSize="Small" HorizontalOptions="End" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="1,0.5,-1,-1" TextColor="#3E4C48"/>
+                                </AbsoluteLayout>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </VerticalStackLayout>
+                </Frame>
+            </DataTemplate>
+
+            <DataTemplate x:Key="BloodOxygenTemplate"
+                        x:DataType="models:BloodOxygen">
+                <Frame CornerRadius="10"
+                    Padding="20"
+                    BackgroundColor="White">
+                    <VerticalStackLayout Spacing="15">
+                        <AbsoluteLayout HorizontalOptions="FillAndExpand">
+                            <Image Source="Resources/Images/Icons/blood_oxygen.png"
+                                HeightRequest="50"
+                                HorizontalOptions="Start" 
+                                AbsoluteLayout.LayoutBounds="0, 0.5, AutoSize, AutoSize"
+                                AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                            <Label Text="血氧" 
+                                FontSize="Large" 
+                                HorizontalOptions="Start" 
+                                FontAttributes="Bold" 
+                                TextColor="Black"
+                                AbsoluteLayout.LayoutBounds="0.25, 0.5, AutoSize, AutoSize"
+                                AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                            <Button Text="查看更多" 
+                                    HorizontalOptions="End" 
+                                    BackgroundColor="White" 
+                                    TextColor="Black"
+                                    AbsoluteLayout.LayoutBounds="1, 0.5, AutoSize, AutoSize"
+                                    AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                        </AbsoluteLayout>
+                        <Frame CornerRadius="10"
+                            Padding="10"
+                            BackgroundColor="White">
+                            <VerticalStackLayout Spacing="15">
+                                <HorizontalStackLayout Spacing="50">
+                                    <VerticalStackLayout Margin="0,25,0,0">
+                                        <Label Text="血氧饱和度" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#098670"/>
+                                        <Label Text="{Binding Saturation, StringFormat='{0}%'}" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#098670" FontAttributes="Bold"/>
+                                    </VerticalStackLayout>
+                                    <Image Source="Resources/Images/blood_oxygen_image.png" HeightRequest="100" HorizontalOptions="End" />
+                                </HorizontalStackLayout>
+                                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                                    <Label Text="测量时间" FontSize="Small" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0,0.5,-1,-1" TextColor="#3E4C48"/>
+                                    <Label Text="{Binding Timestamp}" FontSize="Small" HorizontalOptions="End" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="1,0.5,-1,-1" TextColor="#3E4C48"/>
+                                </AbsoluteLayout>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </VerticalStackLayout>
+
+                </Frame>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="25"
+                            Padding="30">
+            <CollectionView ItemsSource="{Binding BloodPressureMetrics}"
+                            ItemTemplate="{StaticResource BloodPressureTemplate}" />
+            <CollectionView ItemsSource="{Binding HeartRateMetrics}"
+                            ItemTemplate="{StaticResource HeartRateTemplate}" />
+            <CollectionView ItemsSource="{Binding RespirationRateMetrics}"
+                            ItemTemplate="{StaticResource RespirationRateTemplate}" />
+            <CollectionView ItemsSource="{Binding BloodOxygenMetrics}"
+                            ItemTemplate="{StaticResource BloodOxygenTemplate}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

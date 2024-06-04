@@ -4,12 +4,33 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:FacePhys"
+    xmlns:pages="clr-namespace:FacePhys.Pages"
     Shell.FlyoutBehavior="Disabled"
     Title="FacePhys">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <TabBar>
+        <!-- 主页 -->
+        <ShellContent Title="主页" 
+                      Icon="Icons/nav_home.png"
+                      Route="HomePage"
+                      ContentTemplate="{DataTemplate pages:HomePage}" />
 
+        <!-- 测量页 -->
+        <ShellContent Title="测量页" 
+                      Icon="Icons/nav_examine.png"
+                      Route="MeasurePage"
+                      ContentTemplate="{DataTemplate pages:MeasurePage}" />
+                
+        <!-- 报告页 -->
+        <ShellContent Title="报告页" 
+                      Icon="Icons/nav_report.png"
+                      Route="ReportPage"
+                      ContentTemplate="{DataTemplate pages:ReportPage}" />
+
+        <!-- 个人中心 -->
+        <ShellContent Title="个人中心" 
+                      Icon="Icons/nav_user.png"
+                      Route="ProfilePage"
+                      ContentTemplate="{DataTemplate pages:ProfilePage}" />
+    </TabBar>
 </Shell>
