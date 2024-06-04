@@ -8,6 +8,7 @@ namespace FacePhys;
 public partial class MainPage : ContentPage
 {
     CameraService _cameraService = new();
+    DetectService _detectService = new();
 
     bool _taking = false;
 
@@ -32,6 +33,11 @@ public partial class MainPage : ContentPage
     /// <param name="e">The image data</param>
     private void OnFrameCaptured(object sender, byte[] e)
     {
+        if (!_taking)
+        {
+            return;
+        }
+
         if (_frameCount == -1)
         {
             _startTime = DateTime.Now;
@@ -46,10 +52,25 @@ public partial class MainPage : ContentPage
 
         // * 经过一系列处理，获得能用于显示的位图
         _skBitmap = DecodeImage(_imageData);
-        _skBitmap = CropBitmapToSquare(_skBitmap);
-        _skBitmap = RotateBitmap(_skBitmap, -90);
+        // _skBitmap = CropBitmapToSquare(_skBitmap);
+        // _skBitmap = RotateBitmap(_skBitmap, -90);
 
-        // TODO: Detect face
+        // * Detect face
+        var detectResult = _detectService.Detect(_imageData);
+
+        if (detectResult == null)
+        {
+        }
+        else if (detectResult.Boxes.Count == 0)
+        {
+        }
+        else
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                logLabel.Text += $"\n{detectResult.Boxes.Count} faces detected.";
+            });
+        }
 
         // * 通知视图刷新
         canvasView.InvalidateSurface();

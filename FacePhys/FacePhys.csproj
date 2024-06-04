@@ -58,6 +58,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Assets\RFB-320.bin" />
+	  <None Remove="Assets\RFB-320.param" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Assets\RFB-320.bin" />
+	  <EmbeddedResource Include="Assets\RFB-320.param" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
@@ -66,6 +76,7 @@
 		<PackageReference Include="SkiaSharp.Views" Version="2.88.8" />
 		<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8" />
 		<PackageReference Include="SkiaSharp.Views.Maui.Core" Version="2.88.8" />
+		<PackageReference Include="UltraFaceDotNet.Xamarin" Version="1.0.0.2" />
 	</ItemGroup>
 
 </Project>
