@@ -82,6 +82,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Managers\" />
+	  <Folder Include="ViewModels\" />
 	  <Folder Include="Utils\" />
 	</ItemGroup>
 
@@ -93,6 +94,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\HomePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\MeasurePage.xaml">

@@ -17,7 +17,7 @@
             <Label x:Name="logLabel"
                    Text="Log"
                    FontSize="20"
-                   TextColor="White" />
+                   TextColor="Black" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

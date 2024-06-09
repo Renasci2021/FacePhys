@@ -23,4 +23,7 @@
                       ContentTemplate="{DataTemplate pages:SettingsPage}" />
     </TabBar>
 
+    <ShellContent Route="LoginPage"
+                  ContentTemplate="{DataTemplate pages:LoginPage}" />
+
 </Shell>
