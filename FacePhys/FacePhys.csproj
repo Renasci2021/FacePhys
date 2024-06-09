@@ -58,11 +58,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Assets\RFB-320.bin" />
-	  <None Remove="Assets\RFB-320.param" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <EmbeddedResource Include="Assets\RFB-320.bin" />
 	  <EmbeddedResource Include="Assets\RFB-320.param" />
 	</ItemGroup>
@@ -78,12 +73,6 @@
 		<PackageReference Include="SkiaSharp.Views.Maui.Core" Version="2.88.8" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="UltraFaceDotNet.Xamarin" Version="1.0.0.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Managers\" />
-	  <Folder Include="ViewModels\" />
-	  <Folder Include="Utils\" />
 	</ItemGroup>
 
 	<ItemGroup>

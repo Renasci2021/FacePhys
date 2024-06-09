@@ -1,10 +1,12 @@
 ﻿using FacePhys.Services;
+using FacePhys.ViewModels;
 
 namespace FacePhys;
 
 public partial class App : Application
 {
     static DatabaseService? _databaseService;
+    static UserViewModel? _userViewModel;
 
     public static DatabaseService DatabaseService
     {
@@ -16,6 +18,18 @@ public partial class App : Application
                 _databaseService = new(dbPath);
             }
             return _databaseService;
+        }
+    }
+
+    public static UserViewModel UserViewModel
+    {
+        get
+        {
+            if (_userViewModel == null)
+            {
+                _userViewModel = new(DatabaseService);
+            }
+            return _userViewModel;
         }
     }
 
@@ -33,6 +47,6 @@ public partial class App : Application
 
     private bool IsUserLoggedIn()
     {
-        return false;
+        return UserViewModel.IsUserLoggedIn;
     }
 }

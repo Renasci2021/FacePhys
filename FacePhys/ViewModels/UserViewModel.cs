@@ -9,7 +9,7 @@ public class UserViewModel : BaseViewModel
     private readonly DatabaseService _databaseService;
     private User? _currentUser;
 
-    public User? CurentUser
+    public User? User
     {
         get => _currentUser;
         set
@@ -34,19 +34,17 @@ public class UserViewModel : BaseViewModel
     {
         // 创建测试用户
         var userList = await _databaseService.GetUsersAsync();
-        if (userList.Count == 0)
+        foreach (var user in userList)
         {
-            var user = new User
-            {
-                Name = "Test",
-            };
-            await _databaseService.SaveUserAsync(user);
-            CurentUser = user;
+            await _databaseService.DeleteUserAsync(user);
         }
-        else
+        var testUser = new User
         {
-            CurentUser = userList[0];
-        }
+            Username = "Test User",
+            Gender = Gender.Female,
+        };
+        await _databaseService.SaveUserAsync(testUser);
+        User = testUser;
         await Shell.Current.GoToAsync("//HomePage");
     }
 }

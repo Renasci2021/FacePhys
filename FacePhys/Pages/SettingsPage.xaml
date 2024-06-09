@@ -1,12 +1,86 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FacePhys.ViewModels"
              x:Class="FacePhys.Pages.SettingsPage"
-             Title="SettingsPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             x:DataType="vm:UserViewModel"
+             Background="#F5F5F5">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="15">
+            <!-- <Image Source="{Binding User.AvatarUrl}"
+                            HeightRequest="100"
+                            WidthRequest="100"
+                            Aspect="AspectFill"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ChangeAvatarCommand}" />
+                </Image.GestureRecognizers>
+            </Image> -->
+            <Label Text="{Binding User.Username}" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <Label Text="{Binding User.Id}" HorizontalOptions="Center" TextColor="#7CC587"/>
+            <Label Text="设置" HorizontalOptions="Start"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- 第一个垂直布局 -->
+                <VerticalStackLayout Grid.Column="0">
+                        <Label Text="用户名" VerticalOptions="Start" TextColor="#7CC587"/>
+                        <Entry Placeholder="用户名" Text="{Binding User.Username}" />
+                </VerticalStackLayout>
+
+                <!-- 第二个垂直布局 -->
+                <VerticalStackLayout Grid.Column="1">
+                        <Label Text="性别" VerticalOptions="Start" TextColor="#7CC587"/>
+                        <Entry Placeholder="性别" Text="{Binding User.Gender}" />
+                </VerticalStackLayout>
+
+                <!-- 第三个垂直布局 -->
+                <VerticalStackLayout Grid.Column="2">
+                        <Label Text="年龄" VerticalOptions="Start" TextColor="#7CC587"/>
+                        <Entry Placeholder="年龄" Text="{Binding User.Age}" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- 第一个垂直布局 -->
+                <VerticalStackLayout Grid.Column="0">
+                        <Label Text="身高" VerticalOptions="Start" TextColor="#7CC587"/>
+                        <HorizontalStackLayout>
+                        <Entry Placeholder="输入身高" Text="{Binding User.Height}" VerticalOptions="Start"/>
+                        <Label Text="cm" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- 第二个垂直布局 -->
+                <VerticalStackLayout Grid.Column="1">
+                        <Label Text="体重" VerticalOptions="Start" TextColor="#7CC587"/>
+                        <HorizontalStackLayout>
+                        <Entry Placeholder="输入体重" Text="{Binding User.Weight}" VerticalOptions="Start"/>
+                        <Label Text="kg" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Grid>
+
+            
+            <Label Text="自定义设置" VerticalOptions="Start" TextColor="#7CC587"/>
+            <Button Text="默认健康检测模式" VerticalOptions="Center" HorizontalOptions="FillAndExpand" BackgroundColor="White" TextColor="Black"/>
+            <Button Text="全天候无感检测" VerticalOptions="Center" HorizontalOptions="FillAndExpand"  BackgroundColor="White" TextColor="Black"/>
+            <Button Text="显示模式模式" VerticalOptions="Center" HorizontalOptions="FillAndExpand"  BackgroundColor="White" TextColor="Black"/>
+            
+            <Label Text="关于" VerticalOptions="Start" TextColor="#7CC587"/>
+            <Button Text="App信息" VerticalOptions="Center" HorizontalOptions="FillAndExpand"  BackgroundColor="White" TextColor="Black"/> 
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
