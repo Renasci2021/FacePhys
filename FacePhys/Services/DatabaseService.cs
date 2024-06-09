@@ -16,7 +16,7 @@ public class DatabaseService
 
     public async Task<int> GetTestUserAsync()
     {
-        var user = await GetUserByIdAsync(10086);
+        var user = await GetUserByIdAsync(12);
 
         if (user != null)
         {
@@ -28,25 +28,32 @@ public class DatabaseService
             Username = "Test233",
             Age = 25,
             Gender = Gender.Male,
-            Id = 10086
         };
         await _database.InsertAsync(user);
 
-        HealthMetric heartRate = new HeartRate(66)
+        HealthMetric heartRate = new()
         {
             UserId = user.Id,
+            Type = MetricType.HeartRate,
+            HeartRate = 60
         };
-        HealthMetric bloodPressure = new BloodPressure(120, 80)
+        HealthMetric bloodPressure = new()
         {
             UserId = user.Id,
+            Type = MetricType.BloodPressure,
+            BloodPressure = new(120, 80)
         };
-        HealthMetric bloodOxygen = new BloodOxygen(98)
+        HealthMetric bloodOxygen = new()
         {
             UserId = user.Id,
+            Type = MetricType.BloodOxygen,
+            BloodOxygen = 98
         };
-        HealthMetric respiratoryRate = new RespiratoryRate(12)
+        HealthMetric respiratoryRate = new()
         {
             UserId = user.Id,
+            Type = MetricType.RespiratoryRate,
+            RespiratoryRate = 12
         };
 
         await SaveHealthMetricAsync(heartRate);
