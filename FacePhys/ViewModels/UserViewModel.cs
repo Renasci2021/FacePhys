@@ -32,19 +32,8 @@ public class UserViewModel : BaseViewModel
 
     private async void LoginAsync()
     {
-        // 创建测试用户
-        var userList = await _databaseService.GetUsersAsync();
-        foreach (var user in userList)
-        {
-            await _databaseService.DeleteUserAsync(user);
-        }
-        var testUser = new User
-        {
-            Username = "Test User",
-            Gender = Gender.Female,
-        };
-        await _databaseService.SaveUserAsync(testUser);
-        User = testUser;
+        var userId = await _databaseService.GetTestUserAsync();
+        User = await _databaseService.GetUserByIdAsync(userId);
         await Shell.Current.GoToAsync("//HomePage");
     }
 }
