@@ -99,6 +99,7 @@ public partial class MeasurePage : ContentPage
 	{
 		base.OnDisappearing();
 		_carouselTimer?.Stop();
+		_workflowManager.StopDetectingWorkflow();
 	}
 
 	private void UpdateCanvas(SKBitmap? skBitmap)
@@ -141,6 +142,6 @@ public partial class MeasurePage : ContentPage
 
 	private void OnDetectFaceCanceled(object sender, EventArgs e)
 	{
-		// TODO: 添加取消功能
+		_workflowManager.StopDetectingWorkflow();
 	}
 }

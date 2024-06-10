@@ -72,6 +72,14 @@ public class CameraWorkflowManager
     public void StartDetectingWorkflow()
     {
         _workflowState = WorkflowStateEnum.NextToDetect;
+        _uploadCount = 0;
+        _detectTryCount = 0;
+    }
+
+    public void StopDetectingWorkflow()
+    {
+        _workflowState = WorkflowStateEnum.Off;
+        _cameraService.StopCamera();
     }
 
     private async void OnFrameCaptured(object? sender, byte[] imageData)
