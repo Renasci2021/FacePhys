@@ -3,10 +3,93 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FacePhys.Pages.HomePage"
              Title="HomePage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="30" HorizontalOptions="FillAndExpand">
+            <!-- 在这里添加更多的UI元素 -->
+            <AbsoluteLayout HorizontalOptions="FillAndExpand">
+                <Label Text="{Binding User.Username}"/>
+                <BoxView HorizontalOptions="FillAndExpand"/>
+                <Image Source="{Binding User.AvatarUrl}" HeightRequest="40" WidthRequest="40" Aspect="AspectFill" VerticalOptions="Center" HorizontalOptions="End"
+                AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="1,0.5,-1,-1"/>
+            </AbsoluteLayout>
+            
+            <Image Source="Resources/Images/health_tips.png"/>
+            
+            <Frame BackgroundColor="White" CornerRadius="20" HorizontalOptions="FillAndExpand" VerticalOptions="Center"  Margin="5,0">
+                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <HorizontalStackLayout Spacing="10">
+                        <Image Source="Resources/Images/home_heart_rate.png" HeightRequest="40" WidthRequest="40"/>
+                        <Label Text="心率" HorizontalOptions="Center" VerticalOptions="Center" TextColor="#568D5F" FontSize="20"/>
+                    </HorizontalStackLayout>
+                    <Label HorizontalOptions="End" 
+                            VerticalOptions="Center" 
+                            TextColor="#568D5F" 
+                            FontSize="20"
+                            AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="1,0.5,-1,-1">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <!-- <Span Text="{Binding User._healthMetrics.heartRateMetric.HeartRate, StringFormat='{0}'}" FontAttributes="Bold" TextColor="#568D5F"/> -->
+                                    <Span x:Name="HeartRateValue" FontAttributes="Bold" TextColor="#568D5F"/>
+                                    <Span Text="  次/分钟" TextColor="#568D5F"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                    </Label>
+                </AbsoluteLayout>
+            </Frame>
+            <Frame BackgroundColor="White" CornerRadius="20" HorizontalOptions="FillAndExpand" VerticalOptions="Center"  Margin="5,0">
+                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <HorizontalStackLayout Spacing="10">
+                        <Image Source="Resources/Images/home_blood_pressure.png" HeightRequest="40" WidthRequest="40"/>
+                        <Label Text="血压" HorizontalOptions="Center" VerticalOptions="Center" TextColor="#568D5F" FontSize="20"/>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout
+                                            HorizontalOptions="End" 
+                                            VerticalOptions="Center"
+                                            Spacing="0"
+                                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                                            AbsoluteLayout.LayoutBounds="1,0.5,-1,-1">
+                            <Label x:Name="BloodPressureDiastolicValue" TextColor="#568D5F" FontSize="20" FontAttributes="Bold"/>
+                            <Label Text="/" TextColor="#568D5F" FontSize="20" FontAttributes="Bold"/>
+                            <Label x:Name="BloodPressureSystolicValue" TextColor="#568D5F" FontSize="20" FontAttributes="Bold"/>
+                            <Label Text="  mmHg" TextColor="#568D5F" FontSize="20"/>
+                    </HorizontalStackLayout>
+                </AbsoluteLayout>
+            </Frame>
+            <Frame BackgroundColor="White" CornerRadius="20" HorizontalOptions="FillAndExpand" VerticalOptions="Center"  Margin="5,0">
+                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <HorizontalStackLayout Spacing="10">
+                        <Image Source="Resources/Images/home_blood_oxygen.png" HeightRequest="40" WidthRequest="40"/>
+                        <Label Text="血氧" HorizontalOptions="Center" VerticalOptions="Center" TextColor="#568D5F" FontSize="20"/>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout
+                                            HorizontalOptions="End" 
+                                            VerticalOptions="Center"
+                                            Spacing="0"
+                                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                                            AbsoluteLayout.LayoutBounds="1,0.5,-1,-1">
+                            <Label x:Name="BloodOxygenValue" TextColor="#568D5F" FontSize="20" FontAttributes="Bold"/>
+                            <Label Text="  %" TextColor="#568D5F" FontSize="20"/>
+                    </HorizontalStackLayout>
+                </AbsoluteLayout>
+            </Frame>
+            <Frame BackgroundColor="White" CornerRadius="20" HorizontalOptions="FillAndExpand" VerticalOptions="Center"  Margin="5,0">
+                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <HorizontalStackLayout Spacing="10">
+                        <Image Source="Resources/Images/home_respiratory_rate.png" HeightRequest="40" WidthRequest="40"/>
+                        <Label Text="呼吸" HorizontalOptions="Center" VerticalOptions="Center" TextColor="#568D5F" FontSize="20"/>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout
+                                            HorizontalOptions="End" 
+                                            VerticalOptions="Center"
+                                            Spacing="0"
+                                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                                            AbsoluteLayout.LayoutBounds="1,0.5,-1,-1">
+                            <Label x:Name="RespiratoryRateValue" TextColor="#568D5F" FontSize="20" FontAttributes="Bold"/>
+                            <Label Text="  次/分钟" TextColor="#568D5F" FontSize="20"/>
+                    </HorizontalStackLayout>
+                </AbsoluteLayout>
+            </Frame>
+                
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

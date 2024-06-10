@@ -14,6 +14,8 @@ public class DatabaseService
         _database.CreateTableAsync<HealthMetric>().Wait();
     }
 
+    // FIXME: 数据初始化有问题 相似
+    // hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
     public async Task<int> GetTestUserAsync()
     {
         var user = await GetUserByIdAsync(12);
@@ -28,6 +30,8 @@ public class DatabaseService
             Username = "Test233",
             Age = 25,
             Gender = Gender.Male,
+            Height = 169,
+            Weight = 60,
         };
         await _database.InsertAsync(user);
 

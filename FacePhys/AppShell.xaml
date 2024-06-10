@@ -8,6 +8,7 @@
     Shell.FlyoutBehavior="Disabled"
     Title="FacePhys">
 
+    
     <TabBar>
         <ShellContent Title="主页"
                       Route="HomePage"
@@ -21,9 +22,12 @@
         <ShellContent Title="设置"
                       Route="SettingsPage"
                       ContentTemplate="{DataTemplate pages:SettingsPage}" />
+        <ShellContent Route="EditPage"
+                  ContentTemplate="{DataTemplate pages:EditPage}" />
     </TabBar>
 
     <ShellContent Route="LoginPage"
                   ContentTemplate="{DataTemplate pages:LoginPage}" />
+    
 
 </Shell>
