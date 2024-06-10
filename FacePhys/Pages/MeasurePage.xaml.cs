@@ -47,14 +47,14 @@ public partial class MeasurePage : ContentPage
 
 	private async void OnStartingCountDown()
 	{
-		await Task.Delay(1000);
+		dynamicImage.IsVisible = true;
 		updateImage(3);
 		await Task.Delay(1000);
 		updateImage(2);
 		await Task.Delay(1000);
 		updateImage(1);
 		await Task.Delay(1000);
-		updateImage(0);
+		dynamicImage.IsVisible = false;
 
 		void updateImage(int index)
 		{
@@ -92,6 +92,7 @@ public partial class MeasurePage : ContentPage
 	{
 		base.OnAppearing();
 		_carouselTimer?.Start();
+		_ = _workflowManager.OpenCamera();
 	}
 
 	protected override void OnDisappearing()
@@ -130,8 +131,12 @@ public partial class MeasurePage : ContentPage
 		if (_workflowManager.CameraState == WorkflowStateEnum.Off)
 		{
 			await _workflowManager.OpenCamera();
+			_workflowManager.StartDetectingWorkflow();
 		}
-		_workflowManager.StartDetectingWorkflow();
+		else if (_workflowManager.CameraState == WorkflowStateEnum.Idle)
+		{
+			_workflowManager.StartDetectingWorkflow();
+		}
 	}
 
 	private void OnDetectFaceCanceled(object sender, EventArgs e)
