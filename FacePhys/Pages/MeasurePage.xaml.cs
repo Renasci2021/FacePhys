@@ -10,74 +10,78 @@ namespace FacePhys.Pages;
 
 public partial class MeasurePage : ContentPage
 {
-	private TimersTimer? carouselTimer; // 直接使用 Timer
+	private TimersTimer? _carouselTimer; // 直接使用 Timer
 
-	public ObservableCollection<string> carouselViewImagePaths =
+	private CameraWorkflowManager _workflowManager;
+	private SKBitmap? _skBitmap;
+
+	public ObservableCollection<string> _carouselViewImagePaths =
 	[
 		"Resources/Images/waveform.png",
 		"Resources/Images/waveform.png",
 		"Resources/Images/waveform.png",
 	];
 
-	private string[] dynamicImagePaths =
+	private readonly string[] _dynamicImagePaths =
 	[
+		"Resources/Images/transparent.png",
 		"Resources/Images/dynamic1.png",
 		"Resources/Images/dynamic2.png",
 		"Resources/Images/dynamic3.png",
-		"Resources/Images/transparent.png",
 	];
-
-	private CameraWorkflowManager workflowManager;
-	private SKBitmap? skBitmap;
 
 	public MeasurePage()
 	{
+		BindingContext = this;
 		InitializeComponent();
+
 		SetupCarousel();
 		SetupTimer();
 
-		BindingContext = this;
+		_workflowManager = new(new CameraService(), new DetectService(), new NetworkService());
+		_workflowManager.BitmapUpdated += UpdateCanvas;
+		_workflowManager.LogUpdated += UpdateLog;
 
-		workflowManager = new CameraWorkflowManager(new CameraService(), new DetectService());
-		workflowManager.BitmapUpdated += UpdateCanvas;
-		workflowManager.LogUpdated += UpdateLog;
-		workflowManager.OnImageUpdate += UpdateImage;
-
-		//dynamicImage11.Source = ImageSource.FromFile(dynamicImagePaths[2]);
+		_workflowManager.StartCountDown += OnStartingCountDown;
 	}
 
-	private void UpdateImage(int elapsedSeconds)
+	private async void OnStartingCountDown()
 	{
-		MainThread.BeginInvokeOnMainThread(() =>
+		await Task.Delay(1000);
+		updateImage(3);
+		await Task.Delay(1000);
+		updateImage(2);
+		await Task.Delay(1000);
+		updateImage(1);
+		await Task.Delay(1000);
+		updateImage(0);
+
+		void updateImage(int index)
 		{
-			Console.WriteLine($"Updating image for second: {elapsedSeconds}");
-			dynamicImage.Source = elapsedSeconds switch
+			MainThread.BeginInvokeOnMainThread(() =>
 			{
-				1 => ImageSource.FromFile(dynamicImagePaths[2]),
-				2 => ImageSource.FromFile(dynamicImagePaths[1]),
-				3 => ImageSource.FromFile(dynamicImagePaths[0]),
-				_ => ImageSource.FromFile(dynamicImagePaths[3]),
-			};
-		});
+				dynamicImage.Source = ImageSource.FromFile(_dynamicImagePaths[index]);
+			});
+		}
 	}
 
 	private void SetupCarousel()
 	{
-		carouselView.ItemsSource = carouselViewImagePaths;
+		carouselView.ItemsSource = _carouselViewImagePaths;
 		carouselView.Loop = true;
 	}
 
 	private void SetupTimer()
 	{
-		carouselTimer = new TimersTimer(300); // 每0.3秒触发一次
-		carouselTimer.Elapsed += OnTimedEvent;
-		carouselTimer.AutoReset = true;
-		carouselTimer.Enabled = true;
+		_carouselTimer = new TimersTimer(300); // 每0.3秒触发一次
+		_carouselTimer.Elapsed += OnTimedEvent;
+		_carouselTimer.AutoReset = true;
+		_carouselTimer.Enabled = true;
 	}
 
 	private void OnTimedEvent(object? source, ElapsedEventArgs e)
 	{
-		int nextPosition = (carouselView.Position + 1) % carouselViewImagePaths.Count;
+		int nextPosition = (carouselView.Position + 1) % _carouselViewImagePaths.Count;
 		MainThread.BeginInvokeOnMainThread(() =>
 		{
 			carouselView.Position = nextPosition;
@@ -87,26 +91,26 @@ public partial class MeasurePage : ContentPage
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
-		carouselTimer?.Start();
+		_carouselTimer?.Start();
 	}
 
 	protected override void OnDisappearing()
 	{
 		base.OnDisappearing();
-		carouselTimer?.Stop();
+		_carouselTimer?.Stop();
 	}
 
 	private void UpdateCanvas(SKBitmap? skBitmap)
 	{
 		canvasView.InvalidateSurface();
-		this.skBitmap = skBitmap;
+		_skBitmap = skBitmap;
 	}
 
 	private void UpdateLog(string message)
 	{
 		MainThread.BeginInvokeOnMainThread(() =>
 		{
-			logLabel.Text += message;
+			logLabel.Text += $"\n{message}";
 		});
 	}
 
@@ -115,31 +119,23 @@ public partial class MeasurePage : ContentPage
 		var surface = e.Surface;
 		var canvas = surface.Canvas;
 		canvas.Clear();
-		if (skBitmap != null)
+		if (_skBitmap != null)
 		{
-			canvas.DrawBitmap(skBitmap, e.Info.Rect);
+			canvas.DrawBitmap(_skBitmap, e.Info.Rect);
 		}
 	}
 
-	// private void OnButtonClicked(object sender, EventArgs e)
-	// {
-	//     workflowManager.OpenCamera();
-	// }
-
 	private async void OnDetectFaceClicked(object sender, EventArgs e)
 	{
-		if (workflowManager._cameraState == CameraState.Off)
+		if (_workflowManager.CameraState == WorkflowStateEnum.Off)
 		{
-			await workflowManager.OpenCamera();
+			await _workflowManager.OpenCamera();
 		}
-		workflowManager._cameraState = CameraState.NextToDetect;
+		_workflowManager.StartDetectingWorkflow();
 	}
 
 	private void OnDetectFaceCanceled(object sender, EventArgs e)
 	{
-		workflowManager._cameraState = CameraState.Idle;
-
 		// TODO: 添加取消功能
 	}
-
 }
