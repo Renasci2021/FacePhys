@@ -7,37 +7,59 @@ using System.Net.Http;
 using Microsoft.Maui.Controls;
 using Android.Hardware.Camera2;
 using Android.Util;
-
-
-
-
+using System.Timers;
+using SystemTimer = System.Timers.Timer;
+using System.Diagnostics;
 namespace FacePhys.Managers;
+
+public enum CameraState
+{
+    Off,
+    Idle,
+    NextToDetect,
+    DetectingFace,
+    Recording,
+    Uploading,
+    Error
+}
 
 public class CameraWorkflowManager
 {
-    
+    // 摄像头状态
+    public CameraState _cameraState = CameraState.Off;
+    private Stopwatch stopwatch;
+    private SystemTimer _recordingTimer;
+    // 记录录制时间
+    private int _elapsedSeconds=-1;
+    // 定义 OnImageUpdate 事件,事件处理程序需要接受一个 int 参数
+    public event Action<int> OnImageUpdate;
     private CameraService _cameraService;
     private DetectService _detectService;
 
-    private bool cameraReady = false;
+    // private bool cameraReady = false;
 
     private SKBitmap? skBitmap;
 
-    public bool DetectAtNextFrame { get; set; } = false;
+    //public bool DetectAtNextFrame { get; set; } = false;
 
     public event Action<SKBitmap?>? BitmapUpdated;
     public event Action<string>? LogUpdated;
 
-    private FaceInfo faceInfo;
+    private FaceInfo? faceInfo;
 
     // 上传图片计数
     private int uploadCount = 0;
-    private int uploadMaxCount = 40;
+    private int uploadMaxCount = 300;
     // 上传图片的地址
-    private string uploadUrl = "http://183.172.201.246:8000/uploader/";
+    private string uploadUrl = "http://183.173.184.25:8000/uploader/";
     private HttpClient client = new HttpClient();
     public CameraWorkflowManager(CameraService cameraService, DetectService detectService)
     {
+        _recordingTimer = new SystemTimer(); 
+        _recordingTimer.Elapsed += OnRecordingTimerElapsed;
+        _recordingTimer.Interval = 1000;// 每秒触发一次
+        _recordingTimer.AutoReset = true;
+
         _cameraService = cameraService;
         _detectService = detectService;
         _cameraService.FrameCaptured += OnFrameCaptured;
@@ -46,12 +68,14 @@ public class CameraWorkflowManager
     /// <summary>
     /// 打开摄像头，实时显示摄像头画面
     /// </summary>
-    public async void OpenCamera()
+    public async Task OpenCamera()
     {
         var result = await _cameraService.CheckCameraPermissionAsync();
         if (result)
         {
-            cameraReady = true;
+            //cameraReady = true;
+
+            _cameraState = CameraState.Idle;
             _cameraService.StartCamera();
             LogUpdated?.Invoke("Camera started.");
         }
@@ -63,51 +87,72 @@ public class CameraWorkflowManager
 
     private async void OnFrameCaptured(object? sender, byte[] imageData)
     {
-        if (!cameraReady)
-        {
-            return;
-        }
-
-        // ! 旋转角度根据实际情况调整
+        // if (!cameraReady)
+        // {
+        //     return;
+        // }
         skBitmap = PrepareBitmap(imageData, -90);
         BitmapUpdated?.Invoke(skBitmap);
 
+        switch(_cameraState)
+        {
+            case CameraState.Off:
+                break;
+            case CameraState.Idle:
+                break;
+            case CameraState.NextToDetect:
+                // ! 旋转角度根据实际情况调整
+                _cameraState = CameraState.Idle;
+                faceInfo = await Task.Run(() => DetectFace(skBitmap));
+                _cameraState = faceInfo == null ? CameraState.Error : CameraState.Recording;
+                break;
+            case CameraState.DetectingFace:
+                break;
+            case CameraState.Recording:
+                _cameraState = CameraState.Uploading;
+                // 录制视频
+                _elapsedSeconds = 0;
+                _recordingTimer.Start();
+                await Task.Delay(3000);
+                _recordingTimer.Stop();
+                break;
+            case CameraState.Uploading:
+                if(uploadCount == 0)
+                {
+                    
+                    // 打印进入
+                    // Application.Current.MainPage.DisplayAlert("Success", "即将开始传输", "OK");
+                    // 开始上传
+                    StartImageTransfer(this, EventArgs.Empty);
+                }
+                if(uploadCount < uploadMaxCount)
+                {
+                    var croppedBitmap = skBitmap.CropBitmap(faceInfo);
+                    var resizedBitmap = croppedBitmap.ResizeToSize(8);
+
+                    // 逐帧上传
+                    uploadCount++;
+                    //StartImageTransfer(this, EventArgs.Empty);
+
+                    UploadImage(this, EventArgs.Empty,resizedBitmap);
+                }
+                else
+                {
+                    // 结束上传
+                    EndImageTransfer(this, EventArgs.Empty);
+                    _cameraState = CameraState.Idle;
+                    uploadCount = 0;
+                    faceInfo = null;
+                }
+                break;
+            case CameraState.Error:
+                _cameraState = CameraState.Idle;
+                await Application.Current.MainPage.DisplayAlert("Error", "未检测到人脸，请正面朝向手机屏幕、检查光照等环境条件", "OK");
+                break;
+            
+        }
+       
         
-        if (DetectAtNextFrame)
-        {
-            DetectAtNextFrame = false;
-            faceInfo = await Task.Run(() => DetectFace(skBitmap));
-
-        }
-        if (faceInfo != null)
-        {
-            if(uploadCount == 0)
-            {
-                // 打印进入
-                //Application.Current.MainPage.DisplayAlert("Success", "即将开始传输", "OK");
-                // 开始上传
-                StartImageTransfer(this, EventArgs.Empty);
-            }
-            if(uploadCount < uploadMaxCount)
-            {
-                var croppedBitmap = skBitmap.CropBitmap(faceInfo);
-                var resizedBitmap = croppedBitmap.ResizeToSize(8);
-
-                
-                // 逐帧上传
-                uploadCount++;
-                //StartImageTransfer(this, EventArgs.Empty);
-
-                UploadImage(this, EventArgs.Empty,resizedBitmap);
-            }
-            else
-            {
-                // 结束上传
-                uploadCount = 0;
-                faceInfo = null;
-                EndImageTransfer(this, EventArgs.Empty);
-            }
-        }
     }
 
     private SKBitmap PrepareBitmap(byte[] imageData, int rotation = 0)
@@ -121,7 +166,12 @@ public class CameraWorkflowManager
         var detectResult = _detectService.Detect(skData.ToArray());
         if (detectResult != null && detectResult.Boxes.Count > 0)
         {
-            LogUpdated?.Invoke($"{detectResult.Boxes.Count} faces detected.");
+            if(detectResult.Boxes.Count > 1)
+            {
+                LogUpdated?.Invoke($"出现多个检测目标，请保证镜头中只有一人");
+                return null;
+            }
+            LogUpdated?.Invoke($"已成功捕捉到检测目标，倒计时结束后即将开始测量，请保证目标稳定直至检测结束");
             return detectResult.Boxes.First();
         }
         else
@@ -131,27 +181,26 @@ public class CameraWorkflowManager
         }
     }
 
-    
-
     private async void StartImageTransfer(object sender, EventArgs e)
     {
         try
         {
             var response = await client.GetAsync(uploadUrl+"start_image_transfer");
             response.EnsureSuccessStatusCode();
-            Application.Current.MainPage.DisplayAlert("Success", "传输开始成功！", "OK");
+            //await Application.Current.MainPage.DisplayAlert("Success", "传输开始成功！", "OK");
             // var response = await client.GetAsync(uploadUrl+"start_image_transfer");
             // response.EnsureSuccessStatusCode();
             // Device.BeginInvokeOnMainThread(() =>
             // {
             //     Application.Current.MainPage.DisplayAlert("Success", "传输开始成功！", "OK");
             // });
+            stopwatch = Stopwatch.StartNew();
 
         }
         catch (Exception ex)
         {
             
-            Application.Current.MainPage.DisplayAlert("Error", "传输开始失败！" + ex.ToString(), "OK");
+            await Application.Current.MainPage.DisplayAlert("Error", "传输开始失败！" + ex.ToString(), "OK");
             //Console.WriteLine(ex.ToString());
             // Device.BeginInvokeOnMainThread(() =>
             // {
@@ -187,7 +236,7 @@ public class CameraWorkflowManager
         catch (Exception ex)
         {
             // await DisplayAlert("Error", "图片上传失败：" + ex.Message, "OK");
-            Application.Current.MainPage.DisplayAlert("Error", "图片上传失败！" + ex.Message, "OK");
+            await Application.Current.MainPage.DisplayAlert("Error", "图片上传失败！" + ex.Message, "OK");
         }
     }
 
@@ -197,12 +246,13 @@ public class CameraWorkflowManager
 		try
 		{
             var content = new MultipartFormDataContent();
-            var fps = await GetCameraFpsAsync();
+            stopwatch.Stop();
+            var fps = uploadMaxCount/(stopwatch.ElapsedMilliseconds/1000);
             content.Add(new StringContent(fps.ToString()), "fps");
 			var response = await client.PostAsync(uploadUrl+"end_image_transfer",content);
 			response.EnsureSuccessStatusCode();
 			// await DisplayAlert("Success", response.Content.ReadAsStringAsync().Result,"OK");
-            Application.Current.MainPage.DisplayAlert("Success", "传输结束成功！", "OK");
+            await Application.Current.MainPage.DisplayAlert("Success", "传输结束成功！", "OK");
             // var response = await client.GetAsync(uploadUrl+"end_image_transfer");
             // response.EnsureSuccessStatusCode();
             // Device.BeginInvokeOnMainThread(() =>
@@ -213,7 +263,7 @@ public class CameraWorkflowManager
 		catch (Exception ex)
 		{
 			// await DisplayAlert("Error", "传输结束失败：" + ex.Message, "OK");
-            Application.Current.MainPage.DisplayAlert("Error", "传输结束失败！" + ex.Message, "OK");
+            await Application.Current.MainPage.DisplayAlert("Error", "传输结束失败！" + ex.Message, "OK");
             // Device.BeginInvokeOnMainThread(() =>
             // {
             //     Application.Current.MainPage.DisplayAlert("Error", "传输结束失败！" + ex.Message, "OK");
@@ -221,5 +271,13 @@ public class CameraWorkflowManager
 		}
 	}
 
+    private void OnRecordingTimerElapsed(object? sender, ElapsedEventArgs e)
+    {
+        _elapsedSeconds++; // 增加录制时间
+        if(_elapsedSeconds>1){
+
+        }
+        OnImageUpdate?.Invoke(_elapsedSeconds); // 触发图片更新事件，并传递当前秒数
+    }
 
 }
