@@ -45,7 +45,7 @@ public class CameraWorkflowManager
     public event Action<SKBitmap?>? BitmapUpdated;
     public event Action<string>? LogUpdated;
 
-    private FaceInfo? faceInfo;
+    private FaceInfo faceInfo;
 
     // 上传图片计数
     private int uploadCount = 0;
@@ -101,10 +101,17 @@ public class CameraWorkflowManager
             case CameraState.Idle:
                 break;
             case CameraState.NextToDetect:
-                // ! 旋转角度根据实际情况调整
                 _cameraState = CameraState.Idle;
-                faceInfo = await Task.Run(() => DetectFace(skBitmap));
-                _cameraState = faceInfo == null ? CameraState.Error : CameraState.Recording;
+                var result = await Task.Run(() => DetectFace(skBitmap));
+                if (result != null)
+                {
+                    faceInfo = result;
+                    _cameraState = CameraState.Recording;
+                }
+                else
+                {
+                    _cameraState = CameraState.Error;
+                }
                 break;
             case CameraState.DetectingFace:
                 break;
@@ -142,17 +149,13 @@ public class CameraWorkflowManager
                     EndImageTransfer(this, EventArgs.Empty);
                     _cameraState = CameraState.Idle;
                     uploadCount = 0;
-                    faceInfo = null;
                 }
                 break;
             case CameraState.Error:
                 _cameraState = CameraState.Idle;
-                await Application.Current.MainPage.DisplayAlert("Error", "未检测到人脸，请正面朝向手机屏幕、检查光照等环境条件", "OK");
+                LogUpdated?.Invoke("未检测到人脸，请正面朝向手机屏幕、检查光照等环境条件");
                 break;
-            
         }
-       
-        
     }
 
     private SKBitmap PrepareBitmap(byte[] imageData, int rotation = 0)
@@ -187,56 +190,37 @@ public class CameraWorkflowManager
         {
             var response = await client.GetAsync(uploadUrl+"start_image_transfer");
             response.EnsureSuccessStatusCode();
-            //await Application.Current.MainPage.DisplayAlert("Success", "传输开始成功！", "OK");
-            // var response = await client.GetAsync(uploadUrl+"start_image_transfer");
-            // response.EnsureSuccessStatusCode();
-            // Device.BeginInvokeOnMainThread(() =>
-            // {
-            //     Application.Current.MainPage.DisplayAlert("Success", "传输开始成功！", "OK");
-            // });
             stopwatch = Stopwatch.StartNew();
-
         }
         catch (Exception ex)
         {
-            
-            await Application.Current.MainPage.DisplayAlert("Error", "传输开始失败！" + ex.ToString(), "OK");
-            //Console.WriteLine(ex.ToString());
-            // Device.BeginInvokeOnMainThread(() =>
-            // {
-            //     Application.Current.MainPage.DisplayAlert("Error", "传输开始失败！" + ex.ToString(), "OK");
-            // });
-
+            LogUpdated?.Invoke("传输开始失败！" + ex.Message);
         }
     }
 
     private async void UploadImage(object sender, EventArgs e, SKBitmap result)
     {
-        var content = new MultipartFormDataContent();
+        var content = new MultipartFormDataContent
+        {
+            { new StringContent(uploadCount.ToString()), "index" }
+        };
 
-        content.Add(new StringContent(uploadCount.ToString()), "index");
-        
         using (var data = result.Encode(SKEncodedImageFormat.Png, 100))
         {
             byte[] imageBytes = data.ToArray();  // 将 SKData 转换为字节数组
-
             // 添加 PNG 图片数据到表单数据中
             var imageContent = new ByteArrayContent(imageBytes);
 			imageContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 			content.Add(imageContent, "image", "image.png");
         }
-
         try
         {
             var response = await client.PostAsync( uploadUrl+"upload_image", content);
             response.EnsureSuccessStatusCode();
-            // await DisplayAlert("Success", "图片上传成功！", "OK");
-            //Application.Current.MainPage.DisplayAlert("Success", "图片上传成功！"+uploadCount.ToString(), "OK");
         }
         catch (Exception ex)
         {
-            // await DisplayAlert("Error", "图片上传失败：" + ex.Message, "OK");
-            await Application.Current.MainPage.DisplayAlert("Error", "图片上传失败！" + ex.Message, "OK");
+            LogUpdated?.Invoke("图片上传失败！" + ex.Message);
         }
     }
 
@@ -251,25 +235,13 @@ public class CameraWorkflowManager
             content.Add(new StringContent(fps.ToString()), "fps");
 			var response = await client.PostAsync(uploadUrl+"end_image_transfer",content);
 			response.EnsureSuccessStatusCode();
-			// await DisplayAlert("Success", response.Content.ReadAsStringAsync().Result,"OK");
-            await Application.Current.MainPage.DisplayAlert("Success", "传输结束成功！", "OK");
-            // var response = await client.GetAsync(uploadUrl+"end_image_transfer");
-            // response.EnsureSuccessStatusCode();
-            // Device.BeginInvokeOnMainThread(() =>
-            // {
-            //     Application.Current.MainPage.DisplayAlert("Success", "传输结束成功！", "OK");
-            // });
-		}
-		catch (Exception ex)
-		{
-			// await DisplayAlert("Error", "传输结束失败：" + ex.Message, "OK");
-            await Application.Current.MainPage.DisplayAlert("Error", "传输结束失败！" + ex.Message, "OK");
-            // Device.BeginInvokeOnMainThread(() =>
-            // {
-            //     Application.Current.MainPage.DisplayAlert("Error", "传输结束失败！" + ex.Message, "OK");
-            // });
-		}
-	}
+            LogUpdated?.Invoke("传输结束成功！");
+        }
+        catch (Exception ex)
+        {
+            LogUpdated?.Invoke("传输结束失败：" + ex.Message);
+        }
+    }
 
     private void OnRecordingTimerElapsed(object? sender, ElapsedEventArgs e)
     {
