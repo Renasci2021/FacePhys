@@ -22,13 +22,12 @@ public class UserViewModel : BaseViewModel
         }
     }
 
-
     public bool IsUserLoggedIn => _currentUser != null;
 
     public ICommand LoginCommand { get; }
 
     public ICommand SaveCommand { get; }
-    public ICommand NavigateToEditInfoCommand { get; } 
+
     public UserViewModel(DatabaseService databaseService)
     {
         _databaseService = databaseService;
@@ -37,13 +36,8 @@ public class UserViewModel : BaseViewModel
 		{
 			// 保存信息
 			await SaveUserAsync();
-			await Shell.Current.GoToAsync("..");//返回前一页面
-		});
-        NavigateToEditInfoCommand = new Command(async () =>
-        {
-            await Shell.Current.GoToAsync("EditPage");
+            await Shell.Current.GoToAsync("..");//返回前一页面
         });
-
     }
 
     private async void LoginAsync()

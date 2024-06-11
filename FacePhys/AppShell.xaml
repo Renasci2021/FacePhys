@@ -22,12 +22,11 @@
         <ShellContent Title="设置"
                       Route="SettingsPage"
                       ContentTemplate="{DataTemplate pages:SettingsPage}" />
-        <ShellContent Route="EditPage"
-                  ContentTemplate="{DataTemplate pages:EditPage}" />
     </TabBar>
 
     <ShellContent Route="LoginPage"
                   ContentTemplate="{DataTemplate pages:LoginPage}" />
-    
+    <ShellContent Route="EditPage"
+                  ContentTemplate="{DataTemplate pages:EditPage}" />
 
 </Shell>
