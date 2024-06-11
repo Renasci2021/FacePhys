@@ -9,5 +9,6 @@
     <StackLayout Padding="10">
         <Label Text="Login" FontSize="Large" HorizontalOptions="Center" />
         <Button Text="Login" Command="{Binding LoginCommand}" />
+        <Button Text="Register" Clicked="OnRegisterClicked" />
     </StackLayout>
 </ContentPage>

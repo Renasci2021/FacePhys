@@ -7,4 +7,10 @@ public partial class LoginPage : ContentPage
 		InitializeComponent();
 		BindingContext = App.UserViewModel;
 	}
+
+	private async void OnRegisterClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new RegisterPage());
+    }
+
 }

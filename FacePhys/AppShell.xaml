@@ -37,5 +37,7 @@
                   ContentTemplate="{DataTemplate pages:LoginPage}" />
     <ShellContent Route="EditPage"
                   ContentTemplate="{DataTemplate pages:EditPage}" />
+    <ShellContent Route="RegisterPage"
+                  ContentTemplate="{DataTemplate pages:RegisterPage}" />
 
 </Shell>

@@ -75,7 +75,6 @@
 
             <Label Text="更多" VerticalOptions="Start" TextColor="#7CC587"/> 
             <Button Text="修改信息" VerticalOptions="Center" HorizontalOptions="FillAndExpand" BackgroundColor="White" TextColor="Black" Clicked="OnEditClicked"/>
-            <Button Text="大模型" VerticalOptions="Center" HorizontalOptions="FillAndExpand" BackgroundColor="White" TextColor="Black"/>
             
             
             <Label Text="关于" VerticalOptions="Start" TextColor="#7CC587"/>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FacePhys.ViewModels"
+             x:Class="FacePhys.Pages.RegisterPage"
+             x:DataType="vm:UserViewModel"
+             Background="#F5F5F5">
+
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="15">
+
+            <Label Text="用户名" VerticalOptions="Start" TextColor="#7CC587"/>
+            <Entry x:Name="UsernameEntry"/>
+    
+            <Label Text="性别" VerticalOptions="Start" TextColor="#7CC587"/>
+            <Picker x:Name="GenderPicker"
+                    Title="选择性别"
+                    VerticalOptions="Start">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>男</x:String>
+                        <x:String>女</x:String>
+                         <x:String>其他</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+    
+            <Label Text="年龄" VerticalOptions="Start" TextColor="#7CC587"/>
+            <Entry x:Name="UserAgeEntry"/>
+            
+
+            <Label Text="身高" VerticalOptions="Start" TextColor="#7CC587"/>
+            <Entry x:Name="UserHeightEntry"/>
+        
+            <Label Text="体重" VerticalOptions="Start" TextColor="#7CC587"/>
+            <Entry x:Name="UserWeightEntry"/>
+                        
+            <Button Text="注册" Clicked="OnRegisterClicked" />
+            <Button Text="返回" Clicked="OnBackClicked" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

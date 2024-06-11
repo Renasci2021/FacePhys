@@ -126,7 +126,7 @@
                 </VerticalStackLayout>
             </Grid>
 
-            <Button Text="Save Changes"/>
+            <Button Text="Save Changes" Command="SavaCommand"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -31,8 +31,8 @@ public class DatabaseService
             Username = "Test233",
             Age = 25,
             Gender = Gender.Male,
-            Height = 169,
-            Weight = 60,
+            Height = 189,
+            Weight = 70,
         };
         await _database.InsertAsync(user);
 
@@ -77,6 +77,11 @@ public class DatabaseService
     }
 
     // User methods
+    public async Task<User> InsertAsync(User newUser)
+    {
+        await _database.InsertAsync(newUser);
+        return newUser;
+    }
     public async Task<List<User>> GetUsersAsync()
     {
         return await _database.Table<User>().ToListAsync();
@@ -85,6 +90,11 @@ public class DatabaseService
     public async Task<User> GetUserByIdAsync(int id)
     {
         return await _database.Table<User>().FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    public async Task<User> GetUserByUsernameAsync(string username)
+    {
+        return await _database.Table<User>().FirstOrDefaultAsync(u => u.Username == username);
     }
 
     public async Task<int> SaveUserAsync(User user)

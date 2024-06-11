@@ -12,12 +12,12 @@ public partial class HomePage : ContentPage
 	{
 		InitializeComponent();
 		_userViewModel = App.UserViewModel;
-		LoadLatestHealthMetricValues();
 	}
 
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
+		LoadLatestHealthMetricValues();
 	}
 
 	private async void LoadLatestHealthMetricValues()
