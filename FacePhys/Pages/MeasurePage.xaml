@@ -36,7 +36,7 @@
                                 ItemsSource="{Binding carouselViewImagePaths}"
                                 Loop="True"
                                 PeekAreaInsets="0"
-                                HeightRequest="60"
+                                HeightRequest="80"
                                 HorizontalOptions="FillAndExpand"
                                 VerticalOptions="FillAndExpand">
                                 <CarouselView.ItemTemplate>

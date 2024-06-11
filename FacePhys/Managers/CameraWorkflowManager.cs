@@ -136,7 +136,16 @@ public class CameraWorkflowManager
                     _workflowState = WorkflowStateEnum.Idle;
                     _stopwatch.Stop();
                     float fps = _uploadCount / (float)_stopwatch.ElapsedMilliseconds * 1000;
-                    _networkService.EndImageUpload(fps);
+                    var heartRate = _networkService.EndImageUpload(fps);
+                    // 弹窗显示心率
+                    if (heartRate != null)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("检测成功！", $"您的心率为 {heartRate} 次/分钟", "确定");
+                    }
+                    else
+                    {
+                        await Application.Current.MainPage.DisplayAlert("检测失败！", "请检测您的网络连接", "确定");
+                    }
                     _uploadCount = 0;
                     return;
                 }
@@ -147,7 +156,7 @@ public class CameraWorkflowManager
                     var croppedBitmap = _skBitmap.CropBitmap(_faceInfo);
                     var resizedBitmap = croppedBitmap.ResizeToSize(8);
                     var bytes = resizedBitmap.Encode(SKEncodedImageFormat.Png, 100).ToArray();
-                    _networkService.UploadImage(bytes);
+                    _networkService.UploadImage(bytes,_uploadCount);
                 });
                 break;
             default:
