@@ -75,7 +75,7 @@ public class CameraService
             camera.Close();
             owner.cameraDevice = null;
 
-            throw new Exception($"Camera error: {error}");
+            // throw new Exception($"Camera error: {error}");
         }
     }
 
