@@ -11,14 +11,15 @@ public class DatabaseService
     {
         _database = new SQLiteAsyncConnection(dbPath);
         _database.CreateTableAsync<User>().Wait();
-        _database.CreateTableAsync<HealthMetric>().Wait();
+        _database.CreateTableAsync<BloodOxygen>().Wait();
+        _database.CreateTableAsync<BloodPressure>().Wait();
+        _database.CreateTableAsync<HeartRate>().Wait();
+        _database.CreateTableAsync<RespiratoryRate>().Wait();
     }
 
-    // FIXME: 数据初始化有问题 相似
-    // hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
     public async Task<int> GetTestUserAsync()
     {
-        var user = await GetUserByIdAsync(12);
+        var user = await GetUserByIdAsync(250);
 
         if (user != null)
         {
@@ -35,35 +36,42 @@ public class DatabaseService
         };
         await _database.InsertAsync(user);
 
-        HealthMetric heartRate = new()
+        HeartRate heartRate = new()
         {
             UserId = user.Id,
-            Type = MetricType.HeartRate,
-            HeartRate = 60
-        };
-        HealthMetric bloodPressure = new()
-        {
-            UserId = user.Id,
-            Type = MetricType.BloodPressure,
-            BloodPressure = new(120, 80)
-        };
-        HealthMetric bloodOxygen = new()
-        {
-            UserId = user.Id,
-            Type = MetricType.BloodOxygen,
-            BloodOxygen = 98
-        };
-        HealthMetric respiratoryRate = new()
-        {
-            UserId = user.Id,
-            Type = MetricType.RespiratoryRate,
-            RespiratoryRate = 12
+            Timestamp = DateTime.Now,
+            BeatsPerMinute = 80,
         };
 
-        await SaveHealthMetricAsync(heartRate);
-        await SaveHealthMetricAsync(bloodPressure);
-        await SaveHealthMetricAsync(bloodOxygen);
-        await SaveHealthMetricAsync(respiratoryRate);
+        await _database.InsertAsync(heartRate);
+
+        BloodPressure bloodPressure = new()
+        {
+            UserId = user.Id,
+            Timestamp = DateTime.Now,
+            Systolic = 120,
+            Diastolic = 80,
+        };
+
+        await _database.InsertAsync(bloodPressure);
+
+        BloodOxygen bloodOxygen = new()
+        {
+            UserId = user.Id,
+            Timestamp = DateTime.Now,
+            OxygenLevel = 98,
+        };
+
+        await _database.InsertAsync(bloodOxygen);
+
+        RespiratoryRate respiratoryRate = new()
+        {
+            UserId = user.Id,
+            Timestamp = DateTime.Now,
+            BreathsPerMinute = 16,
+        };
+
+        await _database.InsertAsync(respiratoryRate);
 
         return user.Id;
     }
@@ -97,22 +105,18 @@ public class DatabaseService
     }
 
     // HealthMetric methods
-    public async Task<List<HealthMetric>> GetHealthMetricsAsync()
+
+    public async Task<List<T>> GetHealthMetricsAsync<T>(int userId) where T : HealthMetric, new()
     {
-        return await _database.Table<HealthMetric>().ToListAsync();
+        return await _database.Table<T>().Where(hm => hm.UserId == userId).ToListAsync();
     }
 
-    public async Task<HealthMetric> GetHealthMetricByIdAsync(int id)
+    public async Task<T> GetLatestHealthMetricAsync<T>(int userId) where T : HealthMetric, new()
     {
-        return await _database.Table<HealthMetric>().FirstOrDefaultAsync(hm => hm.Id == id);
+        return await _database.Table<T>().Where(hm => hm.UserId == userId).OrderByDescending(hm => hm.Timestamp).FirstOrDefaultAsync();
     }
 
-    public async Task<List<HealthMetric>> GetHealthMetricsByUserIdAsync(int userId)
-    {
-        return await _database.Table<HealthMetric>().Where(hm => hm.UserId == userId).ToListAsync();
-    }
-
-    public async Task<int> SaveHealthMetricAsync(HealthMetric healthMetric)
+    public async Task<int> SaveHealthMetricAsync<T>(T healthMetric) where T : HealthMetric
     {
         if (healthMetric.Id != 0)
         {
@@ -124,8 +128,13 @@ public class DatabaseService
         }
     }
 
-    public async Task<int> DeleteHealthMetricAsync(HealthMetric healthMetric)
+    public async Task<int> DeleteHealthMetricAsync<T>(T healthMetric) where T : HealthMetric
     {
         return await _database.DeleteAsync(healthMetric);
+    }
+
+    public async Task<int> DeleteAllHealthMetricsAsync<T>(int userId) where T : HealthMetric, new()
+    {
+        return await _database.Table<T>().Where(hm => hm.UserId == userId).DeleteAsync();
     }
 }
