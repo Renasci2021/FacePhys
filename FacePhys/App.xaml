@@ -8,7 +8,14 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
+        
+            <Style x:Key="MyTabShell" TargetType="Shell">
+                <Setter Property="TabBarForegroundColor" Value="#7DC589" />
+                <Setter Property="TabBarBackgroundColor" Value="#FFFFFF" /> 
+                <Setter Property="TabBarTitleColor" Value="#7DC589" />  <!-- 选中标签的颜色，这里使用绿色 -->
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

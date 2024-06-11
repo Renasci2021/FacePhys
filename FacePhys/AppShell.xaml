@@ -9,19 +9,28 @@
     Title="FacePhys">
 
     
-    <TabBar>
-        <ShellContent Title="主页"
-                      Route="HomePage"
-                      ContentTemplate="{DataTemplate pages:HomePage}" />
-        <ShellContent Title="测量"
-                      Route="MeasurePage"
-                      ContentTemplate="{DataTemplate pages:MeasurePage}" />
-        <ShellContent Title="报告"
-                      Route="ReportPage"
-                      ContentTemplate="{DataTemplate pages:ReportPage}" />
-        <ShellContent Title="设置"
-                      Route="SettingsPage"
-                      ContentTemplate="{DataTemplate pages:SettingsPage}" />
+    <TabBar  Style="{StaticResource MyTabShell}">
+        
+        <Tab Title="主页"
+                Route="HomePage"
+                Icon="Resources/Images/Icons/nav_home.png">
+            <ShellContent ContentTemplate="{DataTemplate pages:HomePage}" />
+        </Tab>
+        <Tab Title="测量页"
+                Route="MeasurePage"
+                Icon="Resources/Images/Icons/nav_examine.png">
+            <ShellContent ContentTemplate="{DataTemplate pages:MeasurePage}" />
+        </Tab>
+        <Tab Title="报告页"
+                Route="ReportPage"
+                Icon="Resources/Images/Icons/nav_report.png">
+            <ShellContent ContentTemplate="{DataTemplate pages:ReportPage}" />
+        </Tab>
+        <Tab Title="设置"
+                Route="SettingsPage"
+                Icon="Resources/Images/Icons/nav_user.png">
+            <ShellContent ContentTemplate="{DataTemplate pages:SettingsPage}" />
+        </Tab>
     </TabBar>
 
     <ShellContent Route="LoginPage"

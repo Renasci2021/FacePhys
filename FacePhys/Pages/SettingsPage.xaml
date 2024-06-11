@@ -30,23 +30,23 @@
 
                 
                 <VerticalStackLayout Grid.Column="0">
-                        <Label Text="用户名" VerticalOptions="Start" TextColor="#7CC587" Margin="20"/>
-                        <Button Text="{Binding User.Username}" VerticalOptions="Center" BackgroundColor="White" TextColor="Black" Margin="20"/>
+                        <Label Text="用户名" VerticalOptions="Start" TextColor="#7CC587" Margin="10"/>
+                        <Button Text="{Binding User.Username}" VerticalOptions="Center" BackgroundColor="White" TextColor="Black" Margin="10"/>
                         
                 </VerticalStackLayout>
 
                 
                 <VerticalStackLayout Grid.Column="1">
-                        <Label Text="性别" VerticalOptions="Start" TextColor="#7CC587" Margin="20"/>
-                        <Button Text="{Binding User.Gender}" VerticalOptions="Center" BackgroundColor="White" TextColor="Black" Margin="20"/>
+                        <Label Text="性别" VerticalOptions="Start" TextColor="#7CC587" Margin="10"/>
+                        <Button Text="{Binding User.Gender}" VerticalOptions="Center" BackgroundColor="White" TextColor="Black" Margin="10"/>
                         
                 </VerticalStackLayout>
 
                 
                 <VerticalStackLayout Grid.Column="2">
-                        <Label Text="年龄" VerticalOptions="Start" TextColor="#7CC587" Margin="20"/>
+                        <Label Text="年龄" VerticalOptions="Start" TextColor="#7CC587" Margin="10"/>
                         <!-- <Entry Placeholder="年龄" Text="{Binding User.Age}" /> -->
-                        <Button Text="{Binding User.Age}" VerticalOptions="Center" BackgroundColor="White" TextColor="Black" Margin="20"/>
+                        <Button Text="{Binding User.Age}" VerticalOptions="Center" BackgroundColor="White" TextColor="Black" Margin="10"/>
                 </VerticalStackLayout>
             </Grid>
 
@@ -57,17 +57,17 @@
                 </Grid.ColumnDefinitions>
 
                 <VerticalStackLayout Grid.Column="0">
-                        <Label Text="身高（cm）" VerticalOptions="Start" TextColor="#7CC587" Margin="20"/>
+                        <Label Text="身高（cm）" VerticalOptions="Start" TextColor="#7CC587" Margin="10"/>
                         
                         <!-- <Entry Placeholder="输入身高" Text="{Binding User.Height}" VerticalOptions="Start"/> -->
-                        <Button Text="{Binding User.Height}" VerticalOptions="Center" BackgroundColor="White" TextColor="Black" Margin="20"/>  
+                        <Button Text="{Binding User.Height}" VerticalOptions="Center" BackgroundColor="White" TextColor="Black" Margin="10"/>  
                 </VerticalStackLayout>
 
             <VerticalStackLayout Grid.Column="1">
-                        <Label Text="体重（kg）" VerticalOptions="Start" TextColor="#7CC587" Margin="20"/>
+                        <Label Text="体重（kg）" VerticalOptions="Start" TextColor="#7CC587" Margin="10"/>
                         
                         <!-- <Entry Placeholder="输入体重" Text="{Binding User.Weight}" VerticalOptions="Start"/> -->
-                         <Button Text="{Binding User.Weight}" VerticalOptions="Center" BackgroundColor="White" TextColor="Black" Margin="20"/>
+                         <Button Text="{Binding User.Weight}" VerticalOptions="Center" BackgroundColor="White" TextColor="Black" Margin="10"/>
                         
                 </VerticalStackLayout>
             </Grid>
