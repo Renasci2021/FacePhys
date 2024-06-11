@@ -136,7 +136,7 @@ public class CameraWorkflowManager
                     _workflowState = WorkflowStateEnum.Idle;
                     _stopwatch.Stop();
                     float fps = _uploadCount / (float)_stopwatch.ElapsedMilliseconds * 1000;
-                    var heartRate = _networkService.EndImageUpload(fps);
+                    var heartRate = await _networkService.EndImageUpload(fps);
                     // 弹窗显示心率
                     if (heartRate != null)
                     {
@@ -151,7 +151,7 @@ public class CameraWorkflowManager
                 }
 
                 _uploadCount++;
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
                     var croppedBitmap = _skBitmap.CropBitmap(_faceInfo);
                     var resizedBitmap = croppedBitmap.ResizeToSize(8);

@@ -1,7 +1,11 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Newtonsoft.Json;
 using Xamarin.Google.ErrorProne.Annotations;
 namespace FacePhys.Services;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 public class NetworkService
 {
@@ -43,15 +47,20 @@ public class NetworkService
         
             var response = await client.PostAsync(uploadUrl + "end_image_transfer", content);
             response.EnsureSuccessStatusCode();
-        // 解析返回的JSON数据
+            // 解析返回的JSON数据
             var responseData = await response.Content.ReadAsStringAsync();
-            var jsonObject = JsonDocument.Parse(responseData);
 
+            var jsonObject = JsonDocument.Parse(responseData);
+            
+            // await DisplayAlert("Success", response.Content.ReadAsStringAsync().Result,"OK");
             if (jsonObject.RootElement.TryGetProperty("heartRate", out var heartRateElement) &&
             float.TryParse(heartRateElement.ToString(), out float heartRate))
             {
                 return heartRate;
             }
+            // var data = JsonConvert.DeserializeObject<float>(responseData);
+            // return data;
+            
         }
         catch(Exception e)
         {
