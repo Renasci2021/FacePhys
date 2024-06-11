@@ -126,7 +126,7 @@
                 </VerticalStackLayout>
             </Grid>
 
-            <Button Text="Save Changes" Command="{Binding SaveCommand}" />
+            <Button Text="Save Changes"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
