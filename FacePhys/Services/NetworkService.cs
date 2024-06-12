@@ -3,13 +3,17 @@ using System.Text.Json;
 using Newtonsoft.Json;
 using Xamarin.Google.ErrorProne.Annotations;
 namespace FacePhys.Services;
+using FacePhys.ViewModels;
+using FacePhys.Models;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 public class NetworkService
 {
-    private readonly string uploadUrl = "http://183.173.187.18:8000/uploader/";
+    private readonly string uploadUrl = "http://183.172.203.31:8000/uploader/";
+
+    public HealthMetricsViewModel _healthMetricsViewModel { get; set; }
 
     private readonly HttpClient client = new();
 

@@ -11,6 +11,8 @@ using System.Timers;
 using SystemTimer = System.Timers.Timer;
 using System.Diagnostics;
 using Android.Hardware.Camera2.Params;
+using FacePhys.Models;
+using FacePhys.ViewModels;
 namespace FacePhys.Managers;
 
 public enum WorkflowStateEnum
@@ -25,6 +27,7 @@ public enum WorkflowStateEnum
 
 public class CameraWorkflowManager
 {
+    private readonly HealthMetricsViewModel _healthMetricsViewModel;
     private CameraService _cameraService;
     private DetectService _detectService;
     private NetworkService _networkService;
@@ -34,6 +37,8 @@ public class CameraWorkflowManager
     private SKBitmap? _skBitmap;
     private FaceInfo _faceInfo = new();
     private Stopwatch _stopwatch = new();
+
+    public float? heartRate { get; set; }
 
     private int _detectTryCount = 0;
 
@@ -48,6 +53,7 @@ public class CameraWorkflowManager
 
     public CameraWorkflowManager(CameraService cameraService, DetectService detectService, NetworkService networkService)
     {
+        _healthMetricsViewModel = App.HealthMetricsViewModel;
         _cameraService = cameraService;
         _detectService = detectService;
         _networkService = networkService;
@@ -136,16 +142,26 @@ public class CameraWorkflowManager
                     _workflowState = WorkflowStateEnum.Idle;
                     _stopwatch.Stop();
                     float fps = _uploadCount / (float)_stopwatch.ElapsedMilliseconds * 1000;
-                    var heartRate = await _networkService.EndImageUpload(fps);
+                    heartRate = await _networkService.EndImageUpload(fps);
                     // 弹窗显示心率
                     if (heartRate != null)
                     {
                         await Application.Current.MainPage.DisplayAlert("检测成功！", $"您的心率为 {heartRate} 次/分钟", "确定");
+                        HeartRate heartRateMetric = new()
+                        {
+                            UserId = App.UserViewModel.User!.Id,
+                            //BeatsPerMinute = beatsPerMinute1,
+                            BeatsPerMinute = heartRate,
+                        };
+                        _healthMetricsViewModel.AddHealthMetric(heartRateMetric);
+
+                        //await App.Current.MainPage.DisplayAlert("Success", $"{heartRate}", "OK");
                     }
                     else
                     {
                         await Application.Current.MainPage.DisplayAlert("检测失败！", "请检测您的网络连接", "确定");
                     }
+
                     _uploadCount = 0;
                     return;
                 }

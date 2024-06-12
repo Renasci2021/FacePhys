@@ -103,7 +103,7 @@ public partial class AddHealthMetricPage : ContentPage
                 healthMetric = new HeartRate
                 {
                     UserId = _userViewModel.User.Id,
-                    BeatsPerMinute = Convert.ToInt32(dataEntry1.Text),
+                    BeatsPerMinute = float.Parse(dataEntry1.Text),
                     Timestamp = DateTime.Now
                 };
                 break;

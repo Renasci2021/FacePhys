@@ -100,7 +100,7 @@
                             <VerticalStackLayout>
                                 <VerticalStackLayout>
                                     <Label Text="平均心率" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#3E4C48" />
-                                    <Label Text="{Binding BeatsPerMinute, StringFormat='{0}次/分钟'}" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#7CC587" FontAttributes="Bold"/>
+                                    <Label Text="{Binding BeatsPerMinute, StringFormat='{0:F2}次/分钟'}" FontSize="Medium" HorizontalOptions="Start" VerticalOptions="Center" TextColor="#7CC587" FontAttributes="Bold"/>
                                 </VerticalStackLayout>
                                 <Image Source="Resources/Images/heart_rate_image.png" HeightRequest="50" HorizontalOptions="Center" />
                                 <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center">
