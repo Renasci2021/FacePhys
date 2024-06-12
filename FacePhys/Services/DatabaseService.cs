@@ -19,7 +19,7 @@ public class DatabaseService
 
     public async Task<int> GetTestUserAsync()
     {
-        var user = await GetUserByIdAsync(250);
+        var user = await GetUserByIdAsync(75);
 
         if (user != null)
         {
@@ -41,6 +41,15 @@ public class DatabaseService
             UserId = user.Id,
             Timestamp = DateTime.Now,
             BeatsPerMinute = 80,
+        };
+
+        await _database.InsertAsync(heartRate);
+
+        heartRate = new()
+        {
+            UserId = user.Id,
+            Timestamp = DateTime.Now.AddMinutes(-5),
+            BeatsPerMinute = 85,
         };
 
         await _database.InsertAsync(heartRate);

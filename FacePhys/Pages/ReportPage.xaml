@@ -206,24 +206,49 @@
                 </Frame>
             </DataTemplate>
         </ResourceDictionary>
+        <Style x:Key="GreenButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#7CC587" />
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="CornerRadius" Value="10" />
+            <!-- 这里可以添加其他样式设置，如字体大小、内边距等 -->
+        </Style>
     </ContentPage.Resources>
 
     <ScrollView>
-        <VerticalStackLayout Spacing="25"
-                            Padding="30">
-            <CollectionView x:Name="BloodPressureMetricsCollectionView"
-                            ItemsSource="{Binding BloodPressureMetrics}"
-                            ItemTemplate="{StaticResource BloodPressureTemplate}" />
-            <CollectionView x:Name="HeartRateMetricsCollectionView"
-                            ItemsSource="{Binding HeartRateMetrics}"
-                            ItemTemplate="{StaticResource HeartRateTemplate}" />
-            <CollectionView x:Name="RespiratoryRateMetricsCollectionView"
-                            ItemsSource="{Binding RespiratoryRateMetrics}"
-                            ItemTemplate="{StaticResource RespiratoryRateTemplate}" />
-            <CollectionView x:Name="BloodOxygenMetricsCollectionView"
-                            ItemsSource="{Binding BloodOxygenMetrics}"
-                            ItemTemplate="{StaticResource BloodOxygenTemplate}" />
-        </VerticalStackLayout>
+    <Grid>
+        <!-- Define two rows and one column for the Grid -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Button Text="添加新数据"
+                    Style="{StaticResource GreenButtonStyle}"  
+                    HorizontalOptions="End"
+                    VerticalOptions="Start"
+                    Margin="0,30,10,10"
+                    Clicked="OnAddHealthMetricButtonClicked"/>
+        
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="25"
+                                Padding="30">
+                <CollectionView x:Name="BloodPressureMetricsCollectionView"
+                                ItemsSource="{Binding BloodPressureMetrics}"
+                                ItemTemplate="{StaticResource BloodPressureTemplate}" />
+                <CollectionView x:Name="HeartRateMetricsCollectionView"
+                                ItemsSource="{Binding HeartRateMetrics}"
+                                ItemTemplate="{StaticResource HeartRateTemplate}" />
+                <CollectionView x:Name="RespiratoryRateMetricsCollectionView"
+                                ItemsSource="{Binding RespiratoryRateMetrics}"
+                                ItemTemplate="{StaticResource RespiratoryRateTemplate}" />
+                <CollectionView x:Name="BloodOxygenMetricsCollectionView"
+                                ItemsSource="{Binding BloodOxygenMetrics}"
+                                ItemTemplate="{StaticResource BloodOxygenTemplate}" />
+            </VerticalStackLayout>
+        </ScrollView>
+        
+    </Grid>
     </ScrollView>
 </ContentPage>
 

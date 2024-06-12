@@ -9,41 +9,88 @@ namespace FacePhys.Pages;
 public partial class ReportPage : ContentPage
 {
 	private UserViewModel _userViewModel;
+	private HealthMetricsViewModel _healthMetricsViewModel;
 
-	public ObservableCollection<HeartRate> HeartRateMetrics;
-	public ObservableCollection<BloodOxygen> BloodOxygenMetrics;
-	public ObservableCollection<BloodPressure> BloodPressureMetrics;
-	public ObservableCollection<RespiratoryRate> RespiratoryRateMetrics;
+	// public ObservableCollection<HeartRate> HeartRateMetrics;
+	// public ObservableCollection<BloodOxygen> BloodOxygenMetrics;
+	// public ObservableCollection<BloodPressure> BloodPressureMetrics;
+	// public ObservableCollection<RespiratoryRate> RespiratoryRateMetrics;
 
 	public ReportPage()
 	{
-		InitializeComponent();
-		_userViewModel = App.UserViewModel;
-		LoadHealthMetricValues();
-		BindingContext = this;
+		try{
+			InitializeComponent();
+
+			// 订阅消息
+			MessagingCenter.Subscribe<AddHealthMetricPage>(this, "RefreshHealthMetrics", async (sender) =>
+			{
+				await RefreshHealthMetrics();
+			});
+			_userViewModel = App.UserViewModel;
+			_healthMetricsViewModel = App.HealthMetricsViewModel;
+			//LoadHealthMetricValues();
+			BindingContext = App.HealthMetricsViewModel;
+		}
+		catch (Exception ex)
+		{
+			DisplayAlert("Initialization Error", ex.Message, "OK");
+		}
 	}
 
-	protected override void OnAppearing()
+	private async Task RefreshHealthMetrics()
 	{
-		base.OnAppearing();
+		// 刷新页面数据的逻辑
+		await _healthMetricsViewModel.LoadHealthMetricsAsync();
+
+		// 确保通知 UI 更新
+    	OnPropertyChanged(nameof(_healthMetricsViewModel.HeartRateMetrics));
+		OnPropertyChanged(nameof(_healthMetricsViewModel.BloodOxygenMetrics));
+		OnPropertyChanged(nameof(_healthMetricsViewModel.BloodPressureMetrics));
+		OnPropertyChanged(nameof(_healthMetricsViewModel.RespiratoryRateMetrics));
+	}
+
+	protected override void OnDisappearing()
+	{
+		base.OnDisappearing();
+		MessagingCenter.Unsubscribe<AddHealthMetricPage>(this, "RefreshHealthMetrics");
+	}
+	protected override async void OnAppearing()
+	{
+		try
+		{
+			base.OnAppearing();
+			
+		}
+		catch (Exception ex)
+		{
+			DisplayAlert("Error", ex.Message, "OK");
+		}
 		
 	}
 
-	private async void LoadHealthMetricValues()
-	{
-		List<HeartRate> heartRates = await _userViewModel.GetHealthMetricsAsync<HeartRate>();
-		List<BloodOxygen> bloodOxygens = await _userViewModel.GetHealthMetricsAsync<BloodOxygen>();
-		List<BloodPressure> bloodPressures = await _userViewModel.GetHealthMetricsAsync<BloodPressure>();
-		List<RespiratoryRate> respiratoryRates = await _userViewModel.GetHealthMetricsAsync<RespiratoryRate>();
+	// private async void LoadHealthMetricValues()
+	// {
+	// 	BloodOxygenMetrics = new ObservableCollection<BloodOxygen>(_healthMetricsViewModel.BloodOxygenMetrics);
+	// 	BloodPressureMetrics = new ObservableCollection<BloodPressure>(_healthMetricsViewModel.BloodPressureMetrics);
+	// 	RespiratoryRateMetrics = new ObservableCollection<RespiratoryRate>(_healthMetricsViewModel.RespiratoryRateMetrics);
+	// 	HeartRateMetrics = new ObservableCollection<HeartRate>(_healthMetricsViewModel.HeartRateMetrics);
 
-		HeartRateMetrics = new ObservableCollection<HeartRate>(heartRates);
-		BloodOxygenMetrics = new ObservableCollection<BloodOxygen>(bloodOxygens);
-		BloodPressureMetrics = new ObservableCollection<BloodPressure>(bloodPressures);
-		RespiratoryRateMetrics = new ObservableCollection<RespiratoryRate>(respiratoryRates);
-        
-		BloodPressureMetricsCollectionView.ItemsSource = BloodPressureMetrics;
-		HeartRateMetricsCollectionView.ItemsSource = HeartRateMetrics;
-		BloodOxygenMetricsCollectionView.ItemsSource = BloodOxygenMetrics;
-		RespiratoryRateMetricsCollectionView.ItemsSource = RespiratoryRateMetrics;
+	// 	BloodPressureMetricsCollectionView.ItemsSource = BloodPressureMetrics;
+	// 	HeartRateMetricsCollectionView.ItemsSource = HeartRateMetrics;
+	// 	BloodOxygenMetricsCollectionView.ItemsSource = BloodOxygenMetrics;
+	// 	RespiratoryRateMetricsCollectionView.ItemsSource = RespiratoryRateMetrics;
+
+	// }
+
+	private async void OnAddHealthMetricButtonClicked(object sender, EventArgs e)
+	{
+		try
+		{
+			await Navigation.PushAsync(new AddHealthMetricPage(_healthMetricsViewModel));
+		}
+		catch (Exception ex)
+		{
+			await App.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+		}
 	}
 }

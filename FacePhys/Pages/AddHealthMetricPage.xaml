@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FacePhys.ViewModels;assembly=FacePhys"
+             x:Class="FacePhys.Pages.AddHealthMetricPage"
+             Title="AddHealthMetricPage"
+             Background="#F5F5F5">
+    <ContentPage.Resources>
+        <Style x:Key="GreenButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#7CC587" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="CornerRadius" Value="10" />
+                <!-- 这里可以添加其他样式设置，如字体大小、内边距等 -->
+            </Style>
+    </ContentPage.Resources>
+
+    <VerticalStackLayout Spacing="25" Padding="15">
+        <Picker x:Name="metricPicker" Title="选择健康指标" />
+
+        <Entry x:Name="dataEntry1" IsVisible="False" />
+        <Entry x:Name="dataEntry2" IsVisible="False" /> 
+
+
+        <Button Text="添加" Clicked="OnAddHealthMetricClicked" Style="{StaticResource GreenButtonStyle}"/>
+        <Button Text="返回" Clicked="OnBackClicked" Style="{StaticResource GreenButtonStyle}"/>
+    </VerticalStackLayout>
+
+</ContentPage>

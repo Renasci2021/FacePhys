@@ -88,4 +88,8 @@ public class UserViewModel : BaseViewModel
         return true; // 注册成功
     }
 
+    public async Task AddHealthMetric(HealthMetric metric)
+    {
+        await _databaseService.SaveHealthMetricAsync(metric);
+    }
 }

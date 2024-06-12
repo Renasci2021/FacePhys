@@ -39,5 +39,7 @@
                   ContentTemplate="{DataTemplate pages:EditPage}" />
     <ShellContent Route="RegisterPage"
                   ContentTemplate="{DataTemplate pages:RegisterPage}" />
+    <ShellContent Route="AddHealthMetricPage"
+                  ContentTemplate="{DataTemplate pages:AddHealthMetricPage}" />
 
 </Shell>

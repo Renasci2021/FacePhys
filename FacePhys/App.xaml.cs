@@ -7,6 +7,7 @@ public partial class App : Application
 {
     static DatabaseService? _databaseService;
     static UserViewModel? _userViewModel;
+    static HealthMetricsViewModel? _healthMetricsViewModel;
 
     public static DatabaseService DatabaseService
     {
@@ -33,6 +34,17 @@ public partial class App : Application
         }
     }
 
+    public static HealthMetricsViewModel HealthMetricsViewModel
+    {
+        get
+        {
+            if(_healthMetricsViewModel ==null )
+            {
+                _healthMetricsViewModel =  new(DatabaseService);
+            }
+            return _healthMetricsViewModel;
+        }
+    }
     public App()
     {
         InitializeComponent();
