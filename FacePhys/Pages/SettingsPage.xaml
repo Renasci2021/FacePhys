@@ -8,19 +8,20 @@
 
     <ScrollView>
         <VerticalStackLayout Spacing="25" Padding="15">
-            <!-- <Image Source="{Binding User.AvatarUrl}"
+            <Image Source="{Binding User.AvatarUrl}"
                             HeightRequest="100"
                             WidthRequest="100"
                             Aspect="AspectFill"
                             VerticalOptions="Center"
-                            HorizontalOptions="Center">
+                            HorizontalOptions="Center"
+                            Margin="0,30,0,0">
                 <Image.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding ChangeAvatarCommand}" />
                 </Image.GestureRecognizers>
-            </Image> -->
+            </Image>
             <Label Text="{Binding User.Username}" FontAttributes="Bold" HorizontalOptions="Center"/>
             <Label Text="{Binding User.Id}" HorizontalOptions="Center" TextColor="#7CC587"/>
-            <Label Text="设置" HorizontalOptions="Start"/>
+            <!-- <Label Text="设置" HorizontalOptions="Start"/> -->
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

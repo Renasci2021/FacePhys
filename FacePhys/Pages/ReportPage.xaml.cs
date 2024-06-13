@@ -56,9 +56,10 @@ public partial class ReportPage : ContentPage
 	}
 	protected override async void OnAppearing()
 	{
+		base.OnAppearing();
 		try
 		{
-			base.OnAppearing();
+			await RefreshHealthMetrics();
 			
 		}
 		catch (Exception ex)
@@ -87,6 +88,7 @@ public partial class ReportPage : ContentPage
 		try
 		{
 			await Navigation.PushAsync(new AddHealthMetricPage(_healthMetricsViewModel));
+			//Application.Current.MainPage = new AddHealthMetricPage(_healthMetricsViewModel);
 		}
 		catch (Exception ex)
 		{

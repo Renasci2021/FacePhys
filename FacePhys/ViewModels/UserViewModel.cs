@@ -24,20 +24,36 @@ public class UserViewModel : BaseViewModel
     public bool IsUserLoggedIn => _currentUser != null;
 
     public ICommand LoginCommand { get; }
-    public ICommand SaveCommand { get; }
-    public ICommand RegisterCommand { get; }
+    public ICommand ChangeAvatarCommand { get; }
+    //public ICommand RegisterCommand { get; }
 
     public UserViewModel(DatabaseService databaseService)
     {
         _databaseService = databaseService;
         LoginCommand = new Command(LoginAsync);
-        SaveCommand = new Command(async () => 
+        // RegisterCommand = new Command(async () => {
+        //     await RegisterAsync(username, gender, age, height, weight);  // 这里你需要根据实际情况传递正确的参数
+        // });
+
+        ChangeAvatarCommand = new Command(async () =>
         {
-            
+            var result = await MediaPicker.PickPhotoAsync();
+            if (result != null)
+            {
+                User.AvatarUrl = result.FullPath;
+                OnPropertyChanged(nameof(User));
+            }
         });
-        //RegisterCommand = new Command(RegisterAsync);
+
     }
 
+    public async Task UpdateUserAsync()
+    {
+        if (_currentUser != null)
+        {
+            await _databaseService.SaveUserAsync(_currentUser);
+        }
+    }
     public async Task<T> GetLatestHealthMetricAsync<T>() where T : HealthMetric, new()
     {
         return await _databaseService.GetLatestHealthMetricAsync<T>(_currentUser!.Id);
@@ -62,13 +78,17 @@ public class UserViewModel : BaseViewModel
 
          if (age <= 0 || height <= 0 || weight <= 0)
         {
-            return false; // 年龄、身高、体重必须大于零，否则注册失败
+
+            await Application.Current.MainPage.DisplayAlert("Error", "年龄、身高、体重必须大于零，注册失败！", "OK");
+            return false;
+            // 年龄、身高、体重必须大于零，否则注册失败
         }
 
         // 检查用户名是否已存在
         var existingUser = await _databaseService.GetUserByUsernameAsync(username);
         if (existingUser != null)
         {
+            await Application.Current.MainPage.DisplayAlert("Error", "用户名已存在，注册失败！", "OK");
             return false; // 用户名已存在，注册失败
         }
 
@@ -85,7 +105,13 @@ public class UserViewModel : BaseViewModel
         // 将新用户保存到数据库
         await _databaseService.InsertAsync(newUser);
 
-        return true; // 注册成功
+        //return true; // 注册成功
+        await Application.Current.MainPage.DisplayAlert("Success", "注册成功！", "OK");
+
+        User = newUser;
+        
+        return true;
+        
     }
 
     public async Task AddHealthMetric(HealthMetric metric)

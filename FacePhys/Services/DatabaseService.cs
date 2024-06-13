@@ -19,7 +19,7 @@ public class DatabaseService
 
     public async Task<int> GetTestUserAsync()
     {
-        var user = await GetUserByIdAsync(50);
+        var user = await GetUserByIdAsync(43);
 
         if (user != null)
         {

@@ -79,10 +79,10 @@
                                 Margin="10,20,0,0"/>
                 </Grid>
 
-                <Label x:Name="logLabel"
+                <!-- <Label x:Name="logLabel"
                         Text="Log"
                         FontSize="20"
-                        TextColor="Black" />
+                        TextColor="Black" /> -->
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

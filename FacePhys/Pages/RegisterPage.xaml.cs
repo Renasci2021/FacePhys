@@ -25,17 +25,14 @@ public partial class RegisterPage : ContentPage
         bool success = await _userViewModel.RegisterAsync(username, gender, age, height, weight);
         if (success)
         {
-            await DisplayAlert("注册成功", "注册成功", "确定");
-            await Shell.Current.GoToAsync("//HomePage");
+            //await DisplayAlert("注册成功", "注册成功", "确定");
+            //await Shell.Current.GoToAsync("//HomePage");
         }
-        else
-        {
-            await DisplayAlert("注册失败", "注册失败", "确定");
-            await Shell.Current.GoToAsync("//LoginPage");
-        }
+        await Navigation.PopAsync();
     }
     private async void OnBackClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("//LoginPage");
+        //await Shell.Current.GoToAsync("//LoginPage");
+        await Navigation.PopAsync();
     }
 }

@@ -113,7 +113,7 @@ public partial class MeasurePage : ContentPage
 	{
 		MainThread.BeginInvokeOnMainThread(() =>
 		{
-			logLabel.Text += $"\n{message}";
+			//logLabel.Text += $"\n{message}";
 		});
 	}
 

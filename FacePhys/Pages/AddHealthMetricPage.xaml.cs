@@ -139,20 +139,24 @@ public partial class AddHealthMetricPage : ContentPage
                 return;
         }
         
-        _ = _healthMetricsViewModel.AddHealthMetric(healthMetric);
+        await _healthMetricsViewModel.AddHealthMetric(healthMetric);
 
         MessagingCenter.Send(this, "RefreshHealthMetrics");
 
         // 返回上一页
-        //await Navigation.PopAsync();
+        await Navigation.PopAsync();
         // FIXME
-        await Navigation.PushAsync(new ReportPage());
+        //await Navigation.PushAsync(new ReportPage());
+        //Shell.Current.GoToAsync("ReportPage");
+        //Application.Current.MainPage = new ReportPage();
+        //await Shell.Current.GoToAsync("newReportPage");
     }
 
     private async void OnBackClicked(object sender, EventArgs e)
     {
         // 返回上一页
         await Navigation.PopAsync();
+        //Application.Current.MainPage = new ReportPage();
     }
 
 }

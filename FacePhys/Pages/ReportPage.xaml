@@ -5,7 +5,6 @@
              xmlns:vm="clr-namespace:FacePhys.ViewModels;assembly=FacePhys"
              xmlns:selectors="clr-namespace:FacePhys.Selectors;assembly=FacePhys"
              x:Class="FacePhys.Pages.ReportPage"
-             Title="ReportPage"
              Background="#F5F5F5">
     
     <ContentPage.Resources>
