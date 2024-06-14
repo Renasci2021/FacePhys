@@ -19,9 +19,9 @@
 
     <StackLayout Padding="40" Spacing="40">
         <!-- <Label Text="Login" FontSize="Large" HorizontalOptions="Center" /> -->
-        <Entry Placeholder="Username" Text="{Binding User.Username}" /> 
-        <Entry Placeholder="Password" Text="{Binding User.Password}" IsPassword="True" />
-        <Button Text="Login" Command="{Binding LoginCommand}" Style="{StaticResource GreenButtonStyle}" Margin="0,100,0,0"/>
-        <Button Text="Register" Clicked="OnRegisterClicked" Style="{StaticResource GreenButtonStyle}"/>
+        <Entry Placeholder="用户名" Text="{Binding User.Username}" /> 
+        <Entry Placeholder="密码" Text="{Binding User.Password}" IsPassword="True" />
+        <Button Text="登录" Command="{Binding LoginCommand}" Style="{StaticResource GreenButtonStyle}" Margin="0,100,0,0"/>
+        <Button Text="注册" Clicked="OnRegisterClicked" Style="{StaticResource GreenButtonStyle}"/>
     </StackLayout>
 </ContentPage>

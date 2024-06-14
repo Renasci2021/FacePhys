@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 public class NetworkService
 {
-    private readonly string uploadUrl = "http://183.172.203.31:8000/uploader/";
+    private readonly string uploadUrl = "http://183.173.184.202:8000/uploader/";
 
     public HealthMetricsViewModel _healthMetricsViewModel { get; set; }
 

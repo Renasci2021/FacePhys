@@ -13,6 +13,8 @@ using System.Diagnostics;
 using Android.Hardware.Camera2.Params;
 using FacePhys.Models;
 using FacePhys.ViewModels;
+
+
 namespace FacePhys.Managers;
 
 public enum WorkflowStateEnum
@@ -82,10 +84,13 @@ public class CameraWorkflowManager
         _detectTryCount = 0;
     }
 
-    public void StopDetectingWorkflow()
+    public async void StopDetectingWorkflow()
     {
-        _workflowState = WorkflowStateEnum.Off;
-        _cameraService.StopCamera();
+        if (_workflowState != WorkflowStateEnum.Idle)
+        {
+            _workflowState = WorkflowStateEnum.Idle;
+            await Application.Current.MainPage.DisplayAlert("检测已停止", "若欲重新检测，请点击开始检测按钮", "确定"); 
+        }
     }
 
     private async void OnFrameCaptured(object? sender, byte[] imageData)
@@ -105,6 +110,7 @@ public class CameraWorkflowManager
                     if (_detectTryCount > 10)   // * 每间隔 100 毫秒检测一次，连续 10 次未检测到人脸则提示
                     {
                         LogUpdated?.Invoke("未检测到人脸，请保证镜头中有人脸");
+                        await Application.Current.MainPage.DisplayAlert("未检测到人脸", "请保证镜头中有人脸", "确定");
                         _detectTryCount = 0;
                         _workflowState = WorkflowStateEnum.Idle;
                     }
@@ -120,6 +126,9 @@ public class CameraWorkflowManager
                     _workflowState = WorkflowStateEnum.Idle;
                     StartCountDown?.Invoke();
                     LogUpdated?.Invoke("人脸检测成功，即将开始测量");
+                    
+                    //await ToastMessageControl.Show("再次滑动以退出应用", 2000);
+                    await Application.Current.MainPage.DisplayAlert("人脸检测成功", "将在倒数结束后开始测量，请保证画面稳定，人脸位置不变", "确定");
                     await Task.Delay(3000);
                     _workflowState = WorkflowStateEnum.NextToRecord;
                     _faceInfo = result;
