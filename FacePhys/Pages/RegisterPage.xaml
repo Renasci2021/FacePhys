@@ -12,6 +12,9 @@
 
             <Label Text="用户名" VerticalOptions="Start" TextColor="#7CC587"/>
             <Entry x:Name="UsernameEntry"/>
+            
+            <Label Text="密码" VerticalOptions="Start" TextColor="#7CC587"/>
+            <Entry x:Name="PasswordEntry" IsPassword="True"/>
     
             <Label Text="性别" VerticalOptions="Start" TextColor="#7CC587"/>
             <Picker x:Name="GenderPicker"

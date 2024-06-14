@@ -19,6 +19,8 @@
 
     <StackLayout Padding="40" Spacing="40">
         <!-- <Label Text="Login" FontSize="Large" HorizontalOptions="Center" /> -->
+        <Entry Placeholder="Username" Text="{Binding User.Username}" /> 
+        <Entry Placeholder="Password" Text="{Binding User.Password}" IsPassword="True" />
         <Button Text="Login" Command="{Binding LoginCommand}" Style="{StaticResource GreenButtonStyle}" Margin="0,100,0,0"/>
         <Button Text="Register" Clicked="OnRegisterClicked" Style="{StaticResource GreenButtonStyle}"/>
     </StackLayout>

@@ -36,33 +36,15 @@
                 <!-- 第一个垂直布局 -->
                 <VerticalStackLayout Grid.Column="0">
                         <Label Text="用户名" VerticalOptions="Start" TextColor="#7CC587"/>
-                        <!-- <Frame Padding="10"
-                            BackgroundColor="White"
-                            BorderColor="LightGray"
-                            CornerRadius="5"
-                            Margin="20">
-                            <Entry Text="{Binding User.Username}"
-                                BackgroundColor="Transparent"
-                                TextColor="Black"
-                                HorizontalOptions="FillAndExpand" />
-                        </Frame> -->
                         <Entry Placeholder="用户名" Text="{Binding User.Username}"/>
                 </VerticalStackLayout>
 
                 <!-- 第二个垂直布局 -->
                 <VerticalStackLayout Grid.Column="1">
                         <Label Text="性别" VerticalOptions="Start" TextColor="#7CC587"/>
-                        <!-- <Frame Padding="10"
-                            BackgroundColor="White"
-                            BorderColor="LightGray"
-                            CornerRadius="5"
-                            Margin="20">
-                            <Entry Text="{Binding User.Gender}"
-                                BackgroundColor="Transparent"
-                                TextColor="Black"
-                                HorizontalOptions="FillAndExpand" />
-                        </Frame> -->
-                        <Entry Placeholder="性别" Text="{Binding User.Gender}" />
+                        <Picker Title="选择性别" 
+                                ItemsSource="{Binding Genders}"
+                                SelectedItem="{Binding User.Gender}"/>
                 </VerticalStackLayout>
 
                 <!-- 第三个垂直布局 -->

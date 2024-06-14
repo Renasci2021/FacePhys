@@ -8,9 +8,9 @@ namespace FacePhys.ViewModels;
 public class UserViewModel : BaseViewModel
 {
     private readonly DatabaseService _databaseService;
-    private User? _currentUser;
+    private User _currentUser = new();
 
-    public User? User
+    public User User
     {
         get => _currentUser;
         set
@@ -21,7 +21,9 @@ public class UserViewModel : BaseViewModel
         }
     }
 
-    public bool IsUserLoggedIn => _currentUser != null;
+    public List<Gender> Genders => [Gender.Male, Gender.Female, Gender.Other];
+
+    public bool IsUserLoggedIn => _currentUser.Id != 0;
 
     public ICommand LoginCommand { get; }
     public ICommand ChangeAvatarCommand { get; }
@@ -40,7 +42,7 @@ public class UserViewModel : BaseViewModel
             var result = await MediaPicker.PickPhotoAsync();
             if (result != null)
             {
-                User.AvatarUrl = result.FullPath;
+                User!.AvatarUrl = result.FullPath;
                 OnPropertyChanged(nameof(User));
             }
         });
@@ -66,17 +68,30 @@ public class UserViewModel : BaseViewModel
 
     private async void LoginAsync()
     {
-        var userId = await _databaseService.GetTestUserAsync();
-        User = await _databaseService.GetUserByIdAsync(userId);
+        var user = await _databaseService.GetUserByUsernameAsync(User.Username);
+        if (user == null)
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "用户不存在，登录失败！", "OK");
+            return;
+        }
+        if (User.Password != user.Password)
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "密码错误，登录失败！", "OK");
+            return;
+        }
+
+        User = user;
         await Shell.Current.GoToAsync("//HomePage");
     }
 
-    public async Task<bool> RegisterAsync(string username, Gender gender, int age, int height, int weight)
+    public async Task<bool> RegisterAsync(string username, string password, Gender gender, int age, int height, int weight)
     {
         // 验证用户输入，这里简单演示，实际中可能需要更复杂的验证逻
         if (string.IsNullOrWhiteSpace(username))return false; // 输入信息不完整，注册失败
 
-         if (age <= 0 || height <= 0 || weight <= 0)
+        if (string.IsNullOrWhiteSpace(password)) return false; // 输入信息不完整，注册失败
+
+        if (age <= 0 || height <= 0 || weight <= 0)
         {
 
             await Application.Current.MainPage.DisplayAlert("Error", "年龄、身高、体重必须大于零，注册失败！", "OK");
@@ -96,6 +111,7 @@ public class UserViewModel : BaseViewModel
         User newUser = new User
         {
             Username = username,
+            Password = password,
             Age = age, 
             Gender = gender,
             Height = height,
@@ -104,12 +120,11 @@ public class UserViewModel : BaseViewModel
 
         // 将新用户保存到数据库
         await _databaseService.InsertAsync(newUser);
+        await _databaseService.InsertInitialDataToUser(newUser.Id);
 
         //return true; // 注册成功
         await Application.Current.MainPage.DisplayAlert("Success", "注册成功！", "OK");
 
-        User = newUser;
-        
         return true;
         
     }

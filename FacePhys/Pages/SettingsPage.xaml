@@ -74,9 +74,9 @@
             </Grid>
 
 
-            <Label Text="更多" VerticalOptions="Start" TextColor="#7CC587"/> 
+            <Label Text="账号" VerticalOptions="Start" TextColor="#7CC587"/> 
             <Button Text="修改信息" VerticalOptions="Center" HorizontalOptions="FillAndExpand" BackgroundColor="White" TextColor="Black" Clicked="OnEditClicked"/>
-            
+            <Button Text="退出登录" VerticalOptions="Center" HorizontalOptions="FillAndExpand" BackgroundColor="White" TextColor="Black" Clicked="OnLogoutClicked"/>
             
             <Label Text="关于" VerticalOptions="Start" TextColor="#7CC587"/>
             <Button Text="App信息" VerticalOptions="Center" HorizontalOptions="FillAndExpand"  BackgroundColor="White" TextColor="Black"/> 

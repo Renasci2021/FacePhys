@@ -19,7 +19,7 @@ public class DatabaseService
 
     public async Task<int> GetTestUserAsync()
     {
-        var user = await GetUserByIdAsync(43);
+        var user = await GetUserByIdAsync(2);
 
         if (user != null)
         {
@@ -155,5 +155,54 @@ public class DatabaseService
     public async Task<int> DeleteAllHealthMetricsAsync<T>(int userId) where T : HealthMetric, new()
     {
         return await _database.Table<T>().Where(hm => hm.UserId == userId).DeleteAsync();
+    }
+
+    public async Task InsertInitialDataToUser(int userId)
+    {
+        HeartRate heartRate = new()
+        {
+            UserId = userId,
+            Timestamp = DateTime.Now,
+            BeatsPerMinute = (float?)80.0,
+        };
+
+        await _database.InsertAsync(heartRate);
+
+        heartRate = new()
+        {
+            UserId = userId,
+            Timestamp = DateTime.Now.AddMinutes(-5),
+            BeatsPerMinute = (float?)85.01,
+        };
+
+        await _database.InsertAsync(heartRate);
+
+        BloodPressure bloodPressure = new()
+        {
+            UserId = userId,
+            Timestamp = DateTime.Now,
+            Systolic = 120,
+            Diastolic = 80,
+        };
+
+        await _database.InsertAsync(bloodPressure);
+
+        BloodOxygen bloodOxygen = new()
+        {
+            UserId = userId,
+            Timestamp = DateTime.Now,
+            OxygenLevel = 98,
+        };
+
+        await _database.InsertAsync(bloodOxygen);
+
+        RespiratoryRate respiratoryRate = new()
+        {
+            UserId = userId,
+            Timestamp = DateTime.Now,
+            BreathsPerMinute = 16,
+        };
+
+        await _database.InsertAsync(respiratoryRate);
     }
 }
