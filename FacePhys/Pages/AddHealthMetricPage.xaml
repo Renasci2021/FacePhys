@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:FacePhys.ViewModels;assembly=FacePhys"
              x:Class="FacePhys.Pages.AddHealthMetricPage"
-             Title="AddHealthMetricPage"
              Background="#F5F5F5">
     <ContentPage.Resources>
         <Style x:Key="GreenButtonStyle" TargetType="Button">

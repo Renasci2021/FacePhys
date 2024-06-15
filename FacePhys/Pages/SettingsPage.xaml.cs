@@ -27,11 +27,12 @@ public partial class SettingsPage : ContentPage
 		//Application.Current.MainPage = new EditPage();
 	}
 
-	private void OnLogoutClicked(object sender, EventArgs e)
+	private async void OnLogoutClicked(object sender, EventArgs e)
 	{
-		_userViewModel.User = new();
 		// await Navigation.PopAsync();
-		Shell.Current.GoToAsync("//LoginPage");
+		await Shell.Current.GoToAsync("//LoginPage");
+		Task.Delay(3000);
+		_userViewModel.User = new();
 	}
 
 	protected override async void OnAppearing()

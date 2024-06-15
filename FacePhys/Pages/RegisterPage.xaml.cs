@@ -23,6 +23,17 @@ public partial class RegisterPage : ContentPage
         int height = Convert.ToInt32(UserHeightEntry.Text);
         int weight = Convert.ToInt32(UserWeightEntry.Text);
 
+        // 错误判断
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        {
+            await Application.Current.MainPage.DisplayAlert("错误", "用户名或密码不能为空", "确定");
+            return;
+        }
+        if (age < 0 || height < 0 || weight < 0)
+        {
+            await Application.Current.MainPage.DisplayAlert("错误", "年龄、身高、体重不能为负数", "确定");
+            return;
+        }
         bool success = await _userViewModel.RegisterAsync(username, password, gender, age, height, weight);
         if (success)
         {
